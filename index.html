@@ -3,192 +3,234 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Why the Setter Forgot</title>
+<title>Setter Debug Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0d12;--card:#171b25;--line:#2a3140;--text:#eef1f6;--muted:#9aa3b5;--dim:#5f6779;
---blue:#5b9dff;--green:#3fd68a;--red:#ff5d6c;--amber:#ffb547;
---blue-bg:rgba(91,157,255,.13);--green-bg:rgba(63,214,138,.13);--red-bg:rgba(255,93,108,.14);--amber-bg:rgba(255,181,71,.14);--mono:'JetBrains Mono',monospace}
+:root{--bg:#090b10;--card:#141822;--card2:#0f121a;--line:#283041;--text:#eef1f6;--muted:#97a0b3;--dim:#576074;
+--blue:#5b9dff;--green:#3fd68a;--red:#ff5d6c;--amber:#ffb547;--violet:#a78bfa;
+--blue-bg:rgba(91,157,255,.13);--green-bg:rgba(63,214,138,.13);--red-bg:rgba(255,93,108,.14);--amber-bg:rgba(255,181,71,.15);--mono:'JetBrains Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+body{background-image:linear-gradient(rgba(91,157,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(91,157,255,.045) 1px,transparent 1px);background-size:32px 32px}
 #stage{position:absolute;left:50%;top:50%;width:1280px;height:720px}
-.slide{position:absolute;inset:0;padding:70px 90px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:scale(.96)}
-.slide.on{opacity:1;pointer-events:auto;transform:none}
-.tag{font:700 16px var(--mono);letter-spacing:.16em;color:var(--dim);margin-bottom:16px}
-h1{font-size:76px;line-height:1.05;font-weight:800;letter-spacing:-.03em}
-h2{font-size:56px;font-weight:800;letter-spacing:-.02em;margin-bottom:50px}
-.r{color:var(--red)}.g{color:var(--green)}.b{color:var(--blue)}.a{color:var(--amber)}
-.f{opacity:0;transform:translateY(30px) scale(.9);transition:all .5s cubic-bezier(.2,.8,.2,1.3)}
-.f.show{opacity:1;transform:none}
-.row{display:flex;gap:30px;justify-content:center}
-.tile{width:300px;background:var(--card);border:3px solid var(--line);border-radius:26px;padding:34px 20px;transition:all .4s}
-.tile .ic{font-size:72px;line-height:1}
-.tile h3{font-size:30px;font-weight:800;margin-top:18px}
-.tile.red{border-color:var(--red);background:var(--red-bg)}
-.tile.green{border-color:var(--green);background:var(--green-bg)}
-.tile.blue{border-color:var(--blue);background:var(--blue-bg)}
 
-/* list shift */
-.shift{display:flex;gap:60px;align-items:center}
-.qlist{position:relative;width:440px;height:390px;text-align:left}
-.q{position:absolute;left:0;right:0;height:66px;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--card);border:3px solid var(--line);border-radius:16px;font-size:26px;font-weight:800;transition:transform .9s cubic-bezier(.6,0,.2,1),opacity .6s,border-color .4s}
-.q .ix{font:700 22px var(--mono);color:var(--blue);background:var(--blue-bg);border-radius:10px;width:48px;text-align:center;padding:4px 0}
-.q.new{border-color:var(--amber);background:var(--amber-bg)}.q.new .ix{color:var(--amber)}
-.q.hit{border-color:var(--red);box-shadow:0 0 0 6px var(--red-bg)}
-.ptrs{display:flex;flex-direction:column;gap:26px;text-align:left}
-.ptr{font-size:32px;font-weight:800;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:24px 30px;min-width:440px;transition:all .5s}
-.ptr .sv{font:700 20px var(--mono);color:var(--muted);margin-top:6px}
-.ptr.bad{border-color:var(--red);background:var(--red-bg)}
+.title{position:absolute;left:50px;top:30px;font:700 14px var(--mono);letter-spacing:.16em;color:var(--dim)}
+.title b{color:var(--blue)}
 
-/* prompt */
-.pls{width:900px;text-align:left}
-.pl{font:700 30px var(--mono);padding:20px 28px;border-radius:18px;background:var(--card);border:3px solid var(--line);margin-bottom:16px;position:relative;transition:all .5s}
-.pl.new{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);max-height:0;padding:0 28px;opacity:0;border-width:0;margin:0;overflow:hidden}
-.pl.new.show{max-height:160px;padding:20px 28px;opacity:1;border-width:3px;margin-bottom:16px;animation:slam .6s cubic-bezier(.2,.9,.3,1.5)}
-@keyframes slam{0%{transform:translateY(-50px) scale(1.1)}}
-.pl.lose{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--red);border-color:var(--red)}
-.pl.lose:after{content:"❌";position:absolute;right:24px;top:50%;transform:translateY(-50%);text-decoration:none}
+/* pipeline */
+.wire{position:absolute;left:135px;right:135px;top:176px;height:3px;background:var(--line)}
+#packet{position:absolute;top:170px;width:15px;height:15px;border-radius:50%;background:var(--blue);box-shadow:0 0 16px var(--blue);animation:pk 3.6s linear infinite;z-index:1}
+#packet.red{background:var(--red);box-shadow:0 0 16px var(--red)}
+#packet.green{background:var(--green);box-shadow:0 0 16px var(--green)}
+@keyframes pk{0%{left:130px;opacity:0}5%{opacity:1}92%{opacity:1}100%{left:1135px;opacity:0}}
+svg.arc{position:absolute;left:0;top:0;width:1280px;height:720px;pointer-events:none;z-index:0}
+.arclbl{position:absolute;left:560px;top:66px;font:600 12px var(--mono);color:var(--dim)}
 
-/* gates */
-.gates{display:flex;align-items:center;gap:0}
-.gate{width:170px;background:var(--card);border:3px solid var(--line);border-radius:22px;padding:26px 10px;transition:all .4s}
-.gate .ic{font-size:54px}.gate h3{font-size:22px;font-weight:800;margin-top:10px}
-.link{width:28px;height:4px;background:var(--line)}
-.gate.act{border-color:var(--blue);background:var(--blue-bg);transform:translateY(-12px)}
-.gate.pass{border-color:var(--green);background:var(--green-bg)}
-.gate.fail{border-color:var(--red);background:var(--red-bg);animation:shake .5s}
-@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
-.verdict{margin-top:44px;font-size:38px;font-weight:800;height:50px;opacity:0;transition:opacity .4s}
-.verdict.show{opacity:1}
+.node{position:absolute;top:118px;width:170px;height:118px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px 10px;text-align:center;z-index:2;transition:border-color .4s,background .4s,box-shadow .4s}
+.node .ic{font-size:30px;line-height:1}
+.node h3{font-size:16px;font-weight:800;margin-top:7px}
+.node p{font:500 11.5px var(--mono);color:var(--muted);margin-top:4px;line-height:1.35}
+.node.bad{border-color:var(--red);background:#2a141a;box-shadow:0 0 0 5px var(--red-bg)}
+.node.fix{border-color:var(--green);background:#11241b;box-shadow:0 0 0 5px var(--green-bg)}
+.node.lit{border-color:var(--blue);box-shadow:0 0 0 5px var(--blue-bg)}
+.chip{position:absolute;left:50%;top:-15px;transform:translateX(-50%) scale(.6);opacity:0;white-space:nowrap;font:700 11px var(--mono);padding:5px 9px;border-radius:7px;transition:all .4s cubic-bezier(.2,.9,.3,1.5)}
+.chip.on{opacity:1;transform:translateX(-50%) scale(1)}
+.chip.amber{background:var(--amber);color:#211400}.chip.red{background:var(--red);color:#22050a}.chip.green{background:var(--green);color:#03170c}
 
-#bar{position:fixed;left:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .4s}
-#count{position:fixed;right:22px;bottom:16px;font:700 14px var(--mono);color:var(--dim)}
+/* probes */
+.probe{position:absolute;top:248px;width:70px;margin-left:50px;text-align:center;opacity:0;transform:translateY(-10px);transition:all .4s;z-index:3}
+.probe.on{opacity:1;transform:none}
+.probe .ring{width:38px;height:38px;margin:0 auto;border-radius:50%;background:var(--card);border:2px dashed var(--violet);display:grid;place-items:center;font-size:17px}
+.probe .lb{font:700 10px var(--mono);color:var(--violet);margin-top:3px;letter-spacing:.08em}
+.probe.lit .ring{background:var(--violet);border-style:solid;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,.6)}50%{box-shadow:0 0 0 12px rgba(167,139,250,0)}}
+
+/* caption */
+#cap{position:absolute;left:50%;top:312px;transform:translateX(-50%);white-space:nowrap;display:flex;align-items:center;gap:14px;padding:12px 24px;border-radius:999px;background:var(--card);border:2px solid var(--line);font-size:23px;font-weight:800;z-index:4}
+#cap .n{font:700 14px var(--mono);background:var(--blue);color:#06101f;border-radius:999px;padding:4px 10px}
+#cap.anim{animation:capin .5s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes capin{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.95)}}
+
+/* panels */
+.panel{position:absolute;left:50px;right:50px;top:385px;height:300px;opacity:0;pointer-events:none;transform:translateY(16px);transition:all .45s}
+.panel.on{opacity:1;transform:none}
+.box{background:var(--card2);border:2px solid var(--line);border-radius:16px;padding:18px 22px;height:100%}
+.box .hd{font:700 12px var(--mono);letter-spacing:.12em;color:var(--violet);margin-bottom:12px;display:flex;justify-content:space-between}
+.box .hd span:last-child{color:var(--dim)}
+.code{font:500 16.5px/1.75 var(--mono);color:var(--muted);white-space:pre}
+.code .k{color:var(--blue)}.code .s{color:var(--text)}
+.code .bad{color:var(--red);font-weight:700}
+.code .why{color:var(--red);font-size:13.5px}
+.code .ok{color:var(--green);font-weight:700}
+.code .hl{background:var(--red-bg);border-radius:4px;padding:1px 4px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;height:100%}
+
+/* chat */
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:70%;padding:11px 16px;border-radius:16px;font-size:17px;font-weight:500;opacity:0;transform:translateY(10px);transition:all .35s}
+.msg.on{opacity:1;transform:none}
+.msg.bot{background:var(--card);border:2px solid var(--line);align-self:flex-start}
+.msg.lead{background:var(--blue);color:#06101f;align-self:flex-end}
+.msg.x{border-color:var(--red)}
+.msg .tg{font:700 11px var(--mono);color:var(--red);margin-left:10px}
+
+/* cause/fix cards */
+.cc{border-radius:14px;padding:16px 18px;margin-bottom:12px;font-size:18px;font-weight:700;display:flex;gap:14px;align-items:center}
+.cc .t{font:700 11px var(--mono);padding:4px 8px;border-radius:6px;white-space:nowrap}
+.cc.r{background:var(--red-bg);border:2px solid rgba(255,93,108,.45)}.cc.r .t{background:var(--red);color:#22050a}
+.cc.g{background:var(--green-bg);border:2px solid rgba(63,214,138,.45)}.cc.g .t{background:var(--green);color:#03170c}
+.cc code{font:600 14px var(--mono);color:var(--muted);margin-left:auto;white-space:pre;text-align:right}
+
+/* tests */
+.tests{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start}
+.grid{display:grid;grid-template-columns:repeat(20,20px);gap:5px}
+.dot{width:20px;height:20px;border-radius:5px;background:var(--line);transition:background .2s}
+.dot.p{background:var(--green)}.dot.f{background:var(--red)}
+.score{font:700 15px var(--mono);margin-top:14px;color:var(--muted)}
+.score b{font-size:26px}
+.checks div{font:600 14.5px var(--mono);color:var(--muted);padding:7px 0;border-bottom:1px solid var(--line)}
+.flow{display:flex;gap:10px;margin-top:16px;align-items:center;opacity:0;transition:opacity .5s}
+.flow.on{opacity:1}
+.flow span{font:700 13px var(--mono);padding:8px 11px;border-radius:9px;background:var(--green-bg);color:var(--green);border:1px solid rgba(63,214,138,.4);white-space:nowrap}
+.flow i{color:var(--dim);font-style:normal}
+
+#hint{position:fixed;left:18px;bottom:12px;font:600 12px var(--mono);color:var(--dim)}
+#count{position:fixed;right:18px;bottom:12px;font:700 13px var(--mono);color:var(--dim)}
 </style>
 </head>
 <body>
 <div id="stage">
+  <div class="title"><b>AI SETTER</b> · DEBUG MAP</div>
 
-<!-- 1 BUG -->
-<section class="slide">
-  <h1>+1 question <span class="a">=</span> <span class="r">broken setter</span></h1>
-  <div class="row" style="margin-top:60px">
-    <div class="tile red f"><div class="ic">🔁</div><h3>Re-asks answers</h3></div>
-    <div class="tile red f"><div class="ic">🙈</div><h3>Skips intro</h3></div>
-  </div>
-</section>
+  <svg class="arc"><path d="M 945 118 C 945 60, 340 60, 340 118" fill="none" stroke="#283041" stroke-width="2.5" stroke-dasharray="6 6"/><path d="M 334 108 L 340 120 L 346 108" fill="none" stroke="#283041" stroke-width="2.5"/></svg>
+  <div class="arclbl">↺ answers saved back into memory</div>
 
-<!-- 2 CHECK -->
-<section class="slide">
-  <div class="tag">WHAT I CHECK FIRST</div>
-  <h2>Roll back. Then open <span class="b">one bad reply</span>.</h2>
-  <div class="row">
-    <div class="tile blue f"><div class="ic">📜</div><h3>Chat history there?</h3></div>
-    <div class="tile blue f"><div class="ic">🗂️</div><h3>Answers saved?</h3></div>
-    <div class="tile blue f"><div class="ic">📍</div><h3>Which step?</h3></div>
-  </div>
-</section>
+  <div class="wire"></div><div id="packet"></div>
 
-<!-- 3 CAUSE A -->
-<section class="slide">
-  <div class="tag r">CAUSE 1 · MEMORY</div>
-  <h2>Saved by <span class="r">number</span>, not name</h2>
-  <div class="shift">
-    <div class="qlist" id="qlist"></div>
-    <div class="ptrs">
-      <div class="ptr" id="pS">🧍 Sarah <span id="rS">→ Timeline ✅</span><div class="sv">step 2</div></div>
-      <div class="ptr" id="pN">🆕 New lead <span id="rN">→ Intro ✅</span><div class="sv">step 0</div></div>
-    </div>
-  </div>
-</section>
+  <div class="node" id="n0" style="left:50px"><div class="ic">💬</div><h3>Lead texts</h3><p>"Budget's $200"</p></div>
+  <div class="node" id="n1" style="left:252px"><span class="chip" id="c1"></span><div class="ic">🗂️</div><h3>Load memory</h3><p>answers<br>current_step</p></div>
+  <div class="node" id="n2" style="left:454px"><span class="chip" id="c2"></span><div class="ic">🧱</div><h3>Build prompt</h3><p>rules + history<br>+ known answers</p></div>
+  <div class="node" id="n3" style="left:656px"><div class="ic">🤖</div><h3>LLM call</h3><p>writes reply<br>+ extracts fields</p></div>
+  <div class="node" id="n4" style="left:858px"><span class="chip" id="c4"></span><div class="ic">💾</div><h3>Parse + save</h3><p>JSON → DB</p></div>
+  <div class="node" id="n5" style="left:1060px"><span class="chip" id="c5"></span><div class="ic">📤</div><h3>Send reply</h3><p>SMS / DM</p></div>
 
-<!-- 4 CAUSE B -->
-<section class="slide">
-  <div class="tag a">CAUSE 2 · PROMPT</div>
-  <h2>New line <span class="a">overrides</span> old rules</h2>
-  <div class="pls">
-    <div class="pl new" id="plNew">FIRST: ask biggest challenge</div>
-    <div class="pl" id="pl1">Always start with intro</div>
-    <div class="pl" id="pl2">Never re-ask known answers</div>
-  </div>
-</section>
+  <div class="probe" id="pr1" style="left:252px"><div class="ring">🔍</div><div class="lb">LOG 3</div></div>
+  <div class="probe" id="pr2" style="left:454px"><div class="ring">🔍</div><div class="lb">LOG 1</div></div>
+  <div class="probe" id="pr3" style="left:656px"><div class="ring">🔍</div><div class="lb">LOG 2</div></div>
 
-<!-- 5 FIX -->
-<section class="slide">
-  <div class="tag g">THE FIX</div>
-  <h2>Code remembers. <span class="g">LLM just talks.</span></h2>
-  <div class="row">
-    <div class="tile green f"><div class="ic">🏷️</div><h3>Names, not numbers</h3></div>
-    <div class="tile green f"><div class="ic">🧠</div><h3>Code tracks what's known</h3></div>
-    <div class="tile green f"><div class="ic">👋</div><h3>Intro sent by code</h3></div>
-  </div>
-</section>
+  <div id="cap"><span class="n" id="capn"></span><span id="capt"></span></div>
 
-<!-- 6 SYSTEM -->
-<section class="slide">
-  <div class="tag b">SO IT NEVER REACHES A CLIENT</div>
-  <h2>Every change passes <span class="b">5 gates</span></h2>
-  <div class="gates" id="gates">
-    <div class="gate"><div class="ic">📝</div><h3>Review</h3></div><div class="link"></div>
-    <div class="gate"><div class="ic">🎬</div><h3>Replay tests</h3></div><div class="link"></div>
-    <div class="gate"><div class="ic">👻</div><h3>Shadow</h3></div><div class="link"></div>
-    <div class="gate"><div class="ic">🐤</div><h3>10% canary</h3></div><div class="link"></div>
-    <div class="gate"><div class="ic">📡</div><h3>Auto-rollback</h3></div>
-  </div>
-  <div class="verdict" id="verdict"></div>
-</section>
+  <!-- panel: symptom -->
+  <div class="panel" id="p-chat"><div class="box"><div class="hd"><span>WHAT THE LEAD SEES</span><span>after adding 1 question</span></div>
+    <div class="chat">
+      <div class="msg bot x">What's your biggest challenge right now?<span class="tg">NO INTRO ❌</span></div>
+      <div class="msg lead">Staying consistent. Budget's about $200/mo btw</div>
+      <div class="msg bot x">Got it! What's your monthly budget?<span class="tg">RE-ASKED ❌</span></div>
+      <div class="msg lead">…I just told you 😐</div>
+    </div></div></div>
 
+  <!-- panel: payload in -->
+  <div class="panel" id="p-in"><div class="box"><div class="hd"><span>LOG 1 · PAYLOAD SENT INTO THE LLM</span><span>lead: sarah · turn 4</span></div>
+<div class="code"><span class="k">system:</span>  <span class="s hl">"FIRST: ask biggest challenge…"</span>     <span class="why">← new line sits on top of the rules</span>
+         <span class="s">"Always start with intro…"</span>
+<span class="k">history:</span> <span class="s hl">[ last 2 messages only ]</span>             <span class="why">← older turns cut off</span>
+<span class="k">known:</span>   <span class="s hl">{ budget: null }</span>                     <span class="why">← she said $200!</span>
+<span class="k">step:</span>    <span class="s hl">2  →  "Budget"</span>                      <span class="why">← should be "Timeline"</span></div></div></div>
+
+  <!-- panel: output -->
+  <div class="panel" id="p-out"><div class="box"><div class="hd"><span>LOG 2 · WHAT THE LLM SENT BACK</span><span>raw response → parser</span></div>
+<div class="code"><span class="k">raw:</span>     <span class="s">{ "challenge": "consistency", <span class="hl">"Budget"</span>: "$200/mo" }</span>
+<span class="k">parser:</span>  expects <span class="s">"budget"</span>  →  <span class="bad">KeyError</span>
+<span class="k">code:</span>    <span class="s hl">except: pass</span>                         <span class="why">← error swallowed</span>
+<span class="k">saved:</span>   <span class="bad">{ }</span>                                  <span class="why">← nothing reaches memory</span></div></div></div>
+
+  <!-- panel: db -->
+  <div class="panel" id="p-db"><div class="cols">
+    <div class="box"><div class="hd"><span>LOG 3 · DB ROW: SARAH</span><span>what memory holds</span></div>
+<div class="code"><span class="k">current_step:</span> <span class="s">2</span>
+<span class="k">answers:</span>      <span class="bad">{ }</span>
+<span class="k">intro_sent:</span>   <span class="bad">false</span></div></div>
+    <div class="box"><div class="hd"><span>QUESTION LIST</span><span>before → after the change</span></div>
+<div class="code"><span class="k">0</span>  Intro      →  <span class="hl s">Challenge (new)</span>
+<span class="k">1</span>  Budget     →  Intro
+<span class="k">2</span>  <span class="ok">Timeline</span>   →  <span class="bad">Budget</span>   <span class="why">← Sarah lands here</span>
+<span class="k">3</span>  Decider    →  Timeline</div></div>
+  </div></div>
+
+  <!-- panel: causes -->
+  <div class="panel" id="p-cause"><div class="box"><div class="hd"><span>ROOT CAUSES</span><span>from the 3 logs</span></div>
+    <div class="cc r"><span class="t">CAUSE 1</span>Memory tracked by position. New question shifts every step.<code>step = 2</code></div>
+    <div class="cc r"><span class="t">CAUSE 2</span>Prompt-only rules. "FIRST: ask…" beats "intro" + "never re-ask".<code>FIRST: ask…</code></div>
+    <div class="cc r" style="opacity:.8"><span class="t">+ MADE WORSE BY</span>Parser fails silently, so answers are never saved.<code>except: pass</code></div>
+  </div></div>
+
+  <!-- panel: fix -->
+  <div class="panel" id="p-fix"><div class="box"><div class="hd"><span>THE FIX</span><span>code holds memory · LLM just talks</span></div>
+    <div class="cc g"><span class="t">MEMORY</span>Save answers by name, not position<code>answers.budget = "$200"</code></div>
+    <div class="cc g"><span class="t">PROMPT</span>Code tells the LLM what's known + what's left<code>KNOWN: budget · NEEDED: timeline</code></div>
+    <div class="cc g"><span class="t">INTRO + SAVE</span>Intro sent by code. Parser validates + alerts<code>if !intro_sent: send(INTRO)</code></div>
+  </div></div>
+
+  <!-- panel: tests -->
+  <div class="panel" id="p-test"><div class="box"><div class="hd"><span>REPLAY TEST · 100 REAL CHATS THROUGH THE PIPELINE</span><span id="tver">version: broken</span></div>
+    <div class="tests">
+      <div><div class="grid" id="grid"></div><div class="score" id="score">running…</div></div>
+      <div class="checks"><div>✓ intro on turn 1</div><div>✓ never asks a known answer</div><div>✓ every answer saved</div><div>✓ booking link sent</div>
+        <div class="flow" id="flow"><span>100/100</span><i>→</i><span>shadow</span><i>→</i><span>10% canary</span><i>→</i><span>monitor + auto-rollback</span></div></div>
+    </div></div></div>
 </div>
-<div id="bar"></div><div id="count"></div>
+<div id="hint">→ next · ← back</div><div id="count"></div>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-const slides=$$('.slide');let si=0,fi=0;
 function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);$('#stage').style.transform=`translate(-50%,-50%) scale(${s})`}
 addEventListener('resize',fit);fit();
+const grid=$('#grid');for(let i=0;i<100;i++){const d=document.createElement('div');d.className='dot';grid.appendChild(d)}
 
-/* cause 1 */
-const Q0=[['intro','Intro'],['budget','Budget'],['timeline','Timeline'],['decider','Decider']],H=80;
-function drawQ(ins){
-  const list=ins?[['challenge','Challenge',1],...Q0]:Q0,el=$('#qlist');
-  if(!ins){const n=$('#q-challenge');if(n)n.remove()}
-  list.forEach(([id,t,isNew],i)=>{let r=$('#q-'+id);
-    if(!r){r=document.createElement('div');r.className='q'+(isNew?' new':'');r.id='q-'+id;r.innerHTML=`<span class="ix"></span>${t}`;r.style.transform='translateY(-90px)';r.style.opacity=0;el.appendChild(r);r.offsetHeight}
-    r.style.transform=`translateY(${i*H}px)`;r.style.opacity=1;r.querySelector('.ix').textContent=i;r.classList.remove('hit')});
-}
-function resetA(){drawQ(false);$('#pS').classList.remove('bad');$('#pN').classList.remove('bad');$('#rS').textContent='→ Timeline ✅';$('#rN').textContent='→ Intro ✅'}
-
-/* system */
-async function runGates(good){
-  const g=$$('.gate'),v=$('#verdict');g.forEach(x=>x.className='gate');v.classList.remove('show');
-  for(let i=0;i<g.length;i++){g[i].classList.add('act');await wait(500);g[i].classList.remove('act');
-    if(!good&&i===1){g[i].classList.add('fail');v.innerHTML='<span class="r">🚫 Bad change blocked.</span> No client saw it.';v.classList.add('show');return}
-    g[i].classList.add('pass')}
-  v.innerHTML='<span class="g">🚀 Good change shipped.</span>';v.classList.add('show');
+let run=0;
+async function runTests(fixed){
+  const id=++run,ds=$$('.dot');ds.forEach(d=>d.className='dot');$('#flow').classList.remove('on');
+  $('#tver').textContent='version: '+(fixed?'fixed':'broken');$('#score').textContent='running…';
+  const fail=new Set();if(!fixed){let s=7;while(fail.size<62){s=(s*37+11)%100;fail.add(s)}}
+  let pass=0;
+  for(let i=0;i<100;i++){if(id!==run)return;const f=fail.has(i);ds[i].classList.add(f?'f':'p');if(!f)pass++;if(i%4===3)await wait(25)}
+  $('#score').innerHTML=fixed?`<b class="g" style="color:var(--green)">100/100</b> pass → safe to ship`:`<b style="color:var(--red)">${pass}/100</b> pass → <span style="color:var(--red)">blocked</span>`;
+  if(fixed){await wait(300);$('#flow').classList.add('on')}
 }
 
-const extra={
-  2:{steps:[async()=>{drawQ(true);await wait(1000);$('#q-budget').classList.add('hit');$('#q-challenge').classList.add('hit');
-      $('#pS').classList.add('bad');$('#rS').textContent='→ Budget again ❌';await wait(500);
-      $('#pN').classList.add('bad');$('#rN').textContent='→ No intro ❌'}],reset:resetA},
-  3:{steps:[async()=>{$('#plNew').classList.add('show');await wait(700);$('#pl1').classList.add('lose');await wait(400);$('#pl2').classList.add('lose')}],
-     reset:()=>{$('#plNew').classList.remove('show');$('#pl1').classList.remove('lose');$('#pl2').classList.remove('lose')}},
-  5:{steps:[()=>runGates(false),()=>runGates(true)],reset:()=>{$$('.gate').forEach(x=>x.className='gate');$('#verdict').classList.remove('show')}}
-};
-const stepsFor=i=>extra[i]?extra[i].steps:[...slides[i].querySelectorAll('.f')];
-function show(i){
-  slides.forEach((s,k)=>s.classList.toggle('on',k===i));
-  slides[i].querySelectorAll('.f').forEach(f=>f.classList.remove('show'));
-  if(extra[i])extra[i].reset();
-  si=i;fi=0;$('#count').textContent=(i+1)+' / '+slides.length;$('#bar').style.width=((i+1)/slides.length*100)+'%';
+const S=[
+ {cap:'Every lead message runs through this pipeline'},
+ {cap:'We add 1 question → it re-asks + skips intro',panel:'p-chat',packet:'red',chips:{c2:['amber','+ new question']},anim:async()=>{for(const m of $$('#p-chat .msg')){await wait(450);m.classList.add('on')}}},
+ {cap:'I don’t guess. I put a log at every step.',packet:'red',chips:{c2:['amber','+ new question']},probes:true},
+ {cap:'Log 1 · what goes INTO the prompt',panel:'p-in',packet:'red',chips:{c2:['amber','+ new question']},probes:true,lit:['pr2','n2']},
+ {cap:'Log 2 · what comes OUT of the LLM',panel:'p-out',packet:'red',chips:{c2:['amber','+ new question']},probes:true,lit:['pr3','n3']},
+ {cap:'Log 3 · what’s actually saved',panel:'p-db',packet:'red',chips:{c2:['amber','+ new question']},probes:true,lit:['pr1','n1']},
+ {cap:'Found it: 2 causes',panel:'p-cause',packet:'red',probes:true,bad:['n1','n2','n4'],chips:{c1:['red','✗ tracked by position'],c2:['red','✗ rule overridden'],c4:['red','✗ fails silently']}},
+ {cap:'Fix: code holds memory, LLM just talks',panel:'p-fix',packet:'green',probes:true,fix:['n1','n2','n4'],chips:{c1:['green','✓ by name'],c2:['green','✓ known / needed'],c4:['green','✓ validate + alert']}},
+ {cap:'Before shipping: replay 100 real chats',panel:'p-test',packet:'red',probes:true,anim:()=>runTests(false)},
+ {cap:'Ship only at 100/100. Then canary + auto-rollback.',panel:'p-test',packet:'green',probes:true,fix:['n1','n2','n4','n5'],chips:{c5:['green','✓ tested']},anim:()=>runTests(true)},
+];
+let si=0;
+function render(i){
+  const s=S[i];si=i;run++;
+  $('#capn').textContent=(i+1)+'/'+S.length;$('#capt').textContent=s.cap;
+  const c=$('#cap');c.classList.remove('anim');c.offsetWidth;c.classList.add('anim');
+  $$('.panel').forEach(p=>p.classList.toggle('on',p.id===s.panel));
+  $$('#p-chat .msg').forEach(m=>m.classList.remove('on'));
+  $('#packet').className=s.packet||'';
+  $$('.node').forEach(n=>n.className='node'+((s.bad||[]).includes(n.id)?' bad':'')+((s.fix||[]).includes(n.id)?' fix':'')+((s.lit||[]).includes(n.id)?' lit':''));
+  $$('.chip').forEach(ch=>{const v=(s.chips||{})[ch.id];ch.className='chip'+(v?' '+v[0]+' on':'');if(v)ch.textContent=v[1]});
+  $$('.probe').forEach(p=>p.className='probe'+(s.probes?' on':'')+((s.lit||[]).includes(p.id)?' lit':''));
+  $('#count').textContent=(i+1)+' / '+S.length;
+  if(s.anim)s.anim();
 }
-function next(){const st=stepsFor(si);if(fi<st.length){const x=st[fi++];typeof x==='function'?x():x.classList.add('show')}else if(si<slides.length-1)show(si+1)}
-function prev(){show(Math.max(0,si-1))}
+const next=()=>{if(si<S.length-1)render(si+1)},prev=()=>{if(si>0)render(si-1)};
 addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next()}if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}});
 addEventListener('click',e=>{e.clientX<innerWidth*.25?prev():next()});
-drawQ(false);{const m=location.hash.match(/^#([0-9]+)(!?)/);show(m?Math.min(+m[1]-1,slides.length-1):0);if(m&&m[2])stepsFor(si).slice(0,extra[si]&&si===5?1:99).forEach(()=>next())}
+const m=location.hash.match(/^#([0-9]+)/);render(m?Math.min(+m[1]-1,S.length-1):0);
 </script>
 </body>
 </html>
