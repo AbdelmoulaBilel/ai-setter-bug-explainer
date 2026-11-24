@@ -11,7 +11,7 @@
 :root{--bg:#0d0f13;--panel:#13161c;--panel2:#181c23;--line:#262b35;--line2:#323946;--text:#e6e8ec;--muted:#8d94a1;--dim:#5c6370;
 --blue:#6ea8fe;--green:#4ec98a;--red:#f0646f;--amber:#e9ae4f;--mono:'JetBrains Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif;min-height:100vh}
+body{background:var(--bg);color:var(--text);font:16px/1.5 Inter,system-ui,sans-serif;min-height:100vh}
 .wrap{max-width:1220px;margin:0 auto;padding:24px 24px 36px}
 header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 header h1{font-size:19px;font-weight:700}
@@ -64,7 +64,7 @@ header h1{font-size:19px;font-weight:700}
 .sus li.sel{background:#1a2130;box-shadow:inset 3px 0 0 var(--blue)}
 @keyframes in{to{opacity:1;transform:none}}
 .sus .ix{font:500 12px var(--mono);color:var(--dim);padding-top:2px}
-.sus .nm{font-weight:600;font-size:14.5px}
+.sus .nm{font-weight:600;font-size:15.5px}
 .sus .pl{font-size:12.5px;color:var(--muted);margin-top:1px}
 .sus .vd{margin-left:auto;font:500 11px var(--mono);padding:2px 7px;border-radius:4px;white-space:nowrap;color:var(--dim);border:1px solid var(--line2)}
 .sus li.conf .vd{color:var(--red);border-color:rgba(240,100,111,.5)}
@@ -79,16 +79,16 @@ header h1{font-size:19px;font-weight:700}
 .lbl{font:500 11px var(--mono);letter-spacing:.08em;color:var(--dim);margin:14px 0 6px;text-transform:uppercase}
 .lbl:first-child{margin-top:0}
 .big{font-size:17px;font-weight:600}
-.txt{font-size:14.5px;color:var(--muted)}
+.txt{font-size:16px;color:var(--muted)}
 .txt b{color:var(--text);font-weight:600}
 .where{display:inline-block;font:500 12px var(--mono);color:var(--blue);border:1px solid rgba(110,168,254,.4);border-radius:5px;padding:2px 8px}
 .go{margin-top:14px;font:600 14px Inter,sans-serif;background:var(--blue);color:#0a1424;border:0;border-radius:7px;padding:9px 16px;cursor:pointer}
 .go:hover{filter:brightness(1.1)}
-pre{font:400 13.5px/1.7 var(--mono);color:var(--muted);white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:4px}
+pre{font:400 14.5px/1.7 var(--mono);color:var(--muted);white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:4px}
 pre .k{color:var(--blue)} pre .v{color:var(--text)} pre .r{color:var(--red)} pre .g{color:var(--green)} pre .c{color:var(--dim)} pre .a{color:var(--amber)}
 pre .m{background:rgba(240,100,111,.13);border-radius:3px;padding:0 3px;color:var(--text)}
 pre .o{background:rgba(78,201,138,.12);border-radius:3px;padding:0 3px;color:var(--text)}
-.verdict{margin-top:12px;padding:11px 14px;border-radius:8px;font-size:14.5px;animation:fade .3s ease}
+.verdict{margin-top:12px;padding:11px 14px;border-radius:8px;font-size:15.5px;animation:fade .3s ease}
 .verdict.conf{background:rgba(240,100,111,.1);border:1px solid rgba(240,100,111,.45)}
 .verdict.out{background:var(--panel2);border:1px solid var(--line2);color:var(--muted)}
 .verdict b{font:600 12px var(--mono);margin-right:8px}
@@ -97,7 +97,7 @@ pre .o{background:rgba(78,201,138,.12);border-radius:3px;padding:0 3px;color:var
 @media(max-width:700px){.two{grid-template-columns:1fr}}
 
 .chat{display:flex;flex-direction:column;gap:8px;max-width:640px}
-.msg{padding:9px 13px;border-radius:10px;font-size:14.5px;max-width:78%;opacity:0;transform:translateY(6px);transition:all .3s}
+.msg{padding:9px 13px;border-radius:10px;font-size:15.5px;max-width:78%;opacity:0;transform:translateY(6px);transition:all .3s}
 .msg.on{opacity:1;transform:none}
 .msg.bot{background:var(--panel2);border:1px solid var(--line2);align-self:flex-start}
 .msg.lead{background:#22324d;align-self:flex-end}
@@ -231,7 +231,7 @@ function title(t){$('#ititle').innerHTML='<b>'+t+'</b>'}
 function render(){
   const D=$('#diagram');D.classList.toggle('isbad',state==='broken');D.classList.toggle('isok',state==='fixed');
   const st=$('#status');st.className='status'+(state==='broken'?' bad':state==='fixed'?' ok':'');
-  st.textContent={healthy:'v1 · working',broken:'v2 · leads complaining',fixed:'v3 · fixed'}[state];
+  st.textContent={healthy:'working',broken:'leads complaining',fixed:'fixed'}[state];
   const confNodes=SUS.filter(s=>checked[s.id]==='conf').map(s=>s.node);
   const cur=SUS.find(s=>s.id===sel);
   $$('.node').forEach(n=>{const k=n.dataset.n;n.className='node'+((cur&&cur.node===k)||selNode===k?' sel':'')+(state==='broken'&&confNodes.includes(k)?' bad':'')+(state==='fixed'&&['mem','prompt'].includes(k)?' ok':'')+(state!=='healthy'&&k==='prompt'?' changed':'')});
@@ -296,7 +296,7 @@ function showFix(){
 async function runTests(){
   sel=null;selNode=null;const id=++runId,v=state;render();
   const rate={healthy:100,broken:38,fixed:100}[v];
-  title('replay · 100 real past conversations through this version');
+  title('replay · 100 real past conversations through the bot');
   const crit=v==='broken'?[['intro on turn 1','0/100','r'],['never asks a known answer','41/100','r'],['booking link sent','71/100','r']]:[['intro on turn 1','100/100','g'],['never asks a known answer','100/100','g'],['booking link sent','100/100','g']];
   body(`<div class="tests"><div><div class="grid">${'<div class="sq"></div>'.repeat(100)}</div><div class="score" id="score">running…</div></div>
    <div><div class="crit">${crit.map(c=>`<div><span>${c[0]}</span><span class="cr ${c[2]}" style="opacity:0">${c[1]}</span></div>`).join('')}</div><div class="ship" id="ship" style="opacity:0"></div></div></div>`);
