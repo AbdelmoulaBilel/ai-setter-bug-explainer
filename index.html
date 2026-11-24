@@ -6,231 +6,264 @@
 <title>Setter Debug Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#090b10;--card:#141822;--card2:#0f121a;--line:#283041;--text:#eef1f6;--muted:#97a0b3;--dim:#576074;
---blue:#5b9dff;--green:#3fd68a;--red:#ff5d6c;--amber:#ffb547;--violet:#a78bfa;
---blue-bg:rgba(91,157,255,.13);--green-bg:rgba(63,214,138,.13);--red-bg:rgba(255,93,108,.14);--amber-bg:rgba(255,181,71,.15);--mono:'JetBrains Mono',monospace}
+:root{--bg:#0d0f13;--panel:#13161c;--panel2:#181c23;--line:#262b35;--line2:#323946;--text:#e6e8ec;--muted:#8d94a1;--dim:#5c6370;
+--blue:#6ea8fe;--green:#4ec98a;--red:#f0646f;--amber:#e9ae4f;--mono:'JetBrains Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
-body{background-image:linear-gradient(rgba(91,157,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(91,157,255,.045) 1px,transparent 1px);background-size:32px 32px}
-#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px}
+body{background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 40px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+header h1{font-size:20px;font-weight:700}
+header p{color:var(--muted);font-size:14px;margin-top:2px}
+.status{font:500 13px var(--mono);padding:6px 12px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
+.status.bad{color:var(--red);border-color:rgba(240,100,111,.4)}
+.status.ok{color:var(--green);border-color:rgba(78,201,138,.4)}
 
-.title{position:absolute;left:50px;top:30px;font:700 14px var(--mono);letter-spacing:.16em;color:var(--dim)}
-.title b{color:var(--blue)}
+/* toolbar */
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tb{font:500 14px Inter,sans-serif;background:var(--panel2);color:var(--text);border:1px solid var(--line2);border-radius:7px;padding:9px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+.tb:hover:not(:disabled){border-color:var(--blue)}
+.tb:disabled{opacity:.35;cursor:default}
+.tb.done{color:var(--muted)}
+.tb.sug{border-color:var(--blue);animation:sug 1.8s ease-in-out infinite}
+@keyframes sug{0%,100%{box-shadow:0 0 0 0 rgba(110,168,254,.0)}50%{box-shadow:0 0 0 4px rgba(110,168,254,.22)}}
+.tb.ghost{background:transparent;color:var(--muted);margin-left:auto}
 
-/* pipeline */
-.wire{position:absolute;left:135px;right:135px;top:176px;height:3px;background:var(--line)}
-#packet{position:absolute;top:170px;width:15px;height:15px;border-radius:50%;background:var(--blue);box-shadow:0 0 16px var(--blue);animation:pk 3.6s linear infinite;z-index:1}
-#packet.red{background:var(--red);box-shadow:0 0 16px var(--red)}
-#packet.green{background:var(--green);box-shadow:0 0 16px var(--green)}
-@keyframes pk{0%{left:130px;opacity:0}5%{opacity:1}92%{opacity:1}100%{left:1135px;opacity:0}}
-svg.arc{position:absolute;left:0;top:0;width:1280px;height:720px;pointer-events:none;z-index:0}
-.arclbl{position:absolute;left:560px;top:66px;font:600 12px var(--mono);color:var(--dim)}
-
-.node{position:absolute;top:118px;width:170px;height:118px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px 10px;text-align:center;z-index:2;transition:border-color .4s,background .4s,box-shadow .4s}
-.node .ic{font-size:30px;line-height:1}
-.node h3{font-size:16px;font-weight:800;margin-top:7px}
-.node p{font:500 11.5px var(--mono);color:var(--muted);margin-top:4px;line-height:1.35}
-.node.bad{border-color:var(--red);background:#2a141a;box-shadow:0 0 0 5px var(--red-bg)}
-.node.fix{border-color:var(--green);background:#11241b;box-shadow:0 0 0 5px var(--green-bg)}
-.node.lit{border-color:var(--blue);box-shadow:0 0 0 5px var(--blue-bg)}
-.chip{position:absolute;left:50%;top:-15px;transform:translateX(-50%) scale(.6);opacity:0;white-space:nowrap;font:700 11px var(--mono);padding:5px 9px;border-radius:7px;transition:all .4s cubic-bezier(.2,.9,.3,1.5)}
-.chip.on{opacity:1;transform:translateX(-50%) scale(1)}
-.chip.amber{background:var(--amber);color:#211400}.chip.red{background:var(--red);color:#22050a}.chip.green{background:var(--green);color:#03170c}
+/* diagram */
+.diagram{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:46px 22px 20px}
+.loopback{position:absolute;left:0;top:0;width:100%;height:60px;pointer-events:none}
+.loopback span{position:absolute;top:6px;left:50%;transform:translateX(-50%);font:400 11.5px var(--mono);color:var(--dim);background:var(--panel);padding:0 8px}
+.row{display:flex;align-items:stretch;position:relative}
+.node{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:12px 12px 11px;cursor:pointer;position:relative;transition:border-color .2s,background .2s;text-align:left}
+.node:hover{border-color:var(--blue)}
+.node .no{font:500 11px var(--mono);color:var(--dim)}
+.node h3{font-size:14.5px;font-weight:600;margin-top:2px}
+.node p{font:400 11.5px/1.4 var(--mono);color:var(--muted);margin-top:4px}
+.node.sel{border-color:var(--blue);background:#1a2130}
+.node.bad{border-color:rgba(240,100,111,.6)}
+.node.bad .no{color:var(--red)}
+.node.ok{border-color:rgba(78,201,138,.55)}
+.node.ok .no{color:var(--green)}
+.node .flag{position:absolute;right:8px;top:9px;width:8px;height:8px;border-radius:50%;display:none}
+.node.bad .flag{display:block;background:var(--red)}
+.node.ok .flag{display:block;background:var(--green)}
+.node .tagnew{display:none;margin-top:6px;font:500 11px var(--mono);color:var(--amber)}
+.node.changed .tagnew{display:block}
+.conn{width:26px;flex-shrink:0;position:relative}
+.conn:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line2)}
+.conn:after{content:"";position:absolute;right:0;top:calc(50% - 4px);border:4px solid transparent;border-left-color:var(--line2);border-right:0}
+.dot{position:absolute;top:calc(50% - 3px);left:0;width:6px;height:6px;border-radius:50%;background:var(--blue);animation:mv 1.2s linear infinite}
+.diagram.isbad .dot{background:var(--red)} .diagram.isok .dot{background:var(--green)}
+@keyframes mv{from{left:0;opacity:0}30%{opacity:1}to{left:20px;opacity:0}}
 
 /* probes */
-.probe{position:absolute;top:248px;width:70px;margin-left:50px;text-align:center;opacity:0;transform:translateY(-10px);transition:all .4s;z-index:3}
-.probe.on{opacity:1;transform:none}
-.probe .ring{width:38px;height:38px;margin:0 auto;border-radius:50%;background:var(--card);border:2px dashed var(--violet);display:grid;place-items:center;font-size:17px}
-.probe .lb{font:700 10px var(--mono);color:var(--violet);margin-top:3px;letter-spacing:.08em}
-.probe.lit .ring{background:var(--violet);border-style:solid;animation:pulse 1.2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,.6)}50%{box-shadow:0 0 0 12px rgba(167,139,250,0)}}
+.probes{display:flex;margin-top:10px}
+.slot{flex:1;display:flex;justify-content:center}
+.gap{width:26px;flex-shrink:0}
+.probe{font:500 12px var(--mono);color:var(--muted);background:transparent;border:1px dashed var(--line2);border-radius:6px;padding:5px 10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.probe:hover{color:var(--text);border-color:var(--blue)}
+.probe.sel{color:var(--text);border-style:solid;border-color:var(--blue);background:#1a2130}
+.probe.sug{border-color:var(--blue);color:var(--text);animation:sug 1.8s ease-in-out infinite}
+.probe.seen:before{content:"✓";color:var(--green)}
+.probe i{font-style:normal;color:var(--dim)}
 
-/* caption */
-#cap{position:absolute;left:50%;top:312px;transform:translateX(-50%);white-space:nowrap;display:flex;align-items:center;gap:14px;padding:12px 24px;border-radius:999px;background:var(--card);border:2px solid var(--line);font-size:23px;font-weight:800;z-index:4}
-#cap .n{font:700 14px var(--mono);background:var(--blue);color:#06101f;border-radius:999px;padding:4px 10px}
-#cap.anim{animation:capin .5s cubic-bezier(.2,.9,.3,1.3)}
-@keyframes capin{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.95)}}
-
-/* panels */
-.panel{position:absolute;left:50px;right:50px;top:385px;height:300px;opacity:0;pointer-events:none;transform:translateY(16px);transition:all .45s}
-.panel.on{opacity:1;transform:none}
-.box{background:var(--card2);border:2px solid var(--line);border-radius:16px;padding:18px 22px;height:100%}
-.box .hd{font:700 12px var(--mono);letter-spacing:.12em;color:var(--violet);margin-bottom:12px;display:flex;justify-content:space-between}
-.box .hd span:last-child{color:var(--dim)}
-.code{font:500 16.5px/1.75 var(--mono);color:var(--muted);white-space:pre}
-.code .k{color:var(--blue)}.code .s{color:var(--text)}
-.code .bad{color:var(--red);font-weight:700}
-.code .why{color:var(--red);font-size:13.5px}
-.code .ok{color:var(--green);font-weight:700}
-.code .hl{background:var(--red-bg);border-radius:4px;padding:1px 4px}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;height:100%}
+/* inspector */
+.inspector{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;min-height:330px;overflow:hidden}
+.ihead{display:flex;justify-content:space-between;gap:12px;padding:11px 18px;border-bottom:1px solid var(--line);font:500 12.5px var(--mono);color:var(--muted)}
+.ihead b{color:var(--text);font-weight:500}
+.ibody{padding:18px 20px;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+.empty{color:var(--dim);font-size:14px;padding:40px 0;text-align:center}
+.note{color:var(--muted);font-size:14px;margin-bottom:12px;max-width:760px}
+.note b{color:var(--text);font-weight:600}
+pre{font:400 14px/1.75 var(--mono);color:var(--muted);white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto}
+pre .k{color:var(--blue)} pre .v{color:var(--text)} pre .r{color:var(--red)} pre .g{color:var(--green)} pre .c{color:var(--dim)} pre .a{color:var(--amber)}
+pre .m{background:rgba(240,100,111,.12);border-radius:3px;padding:0 3px;color:var(--text)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.two{grid-template-columns:1fr}.row{flex-direction:column}.conn{height:16px;width:auto}.conn:before{left:50%;top:0;bottom:0;border-top:0;border-left:1px solid var(--line2)}.conn:after,.dot{display:none}.probes{display:none}}
 
 /* chat */
-.chat{display:flex;flex-direction:column;gap:10px}
-.msg{max-width:70%;padding:11px 16px;border-radius:16px;font-size:17px;font-weight:500;opacity:0;transform:translateY(10px);transition:all .35s}
+.chat{display:flex;flex-direction:column;gap:8px;max-width:620px}
+.msg{padding:9px 13px;border-radius:10px;font-size:14.5px;max-width:78%;opacity:0;transform:translateY(6px);transition:all .3s}
 .msg.on{opacity:1;transform:none}
-.msg.bot{background:var(--card);border:2px solid var(--line);align-self:flex-start}
-.msg.lead{background:var(--blue);color:#06101f;align-self:flex-end}
-.msg.x{border-color:var(--red)}
-.msg .tg{font:700 11px var(--mono);color:var(--red);margin-left:10px}
-
-/* cause/fix cards */
-.cc{border-radius:14px;padding:16px 18px;margin-bottom:12px;font-size:18px;font-weight:700;display:flex;gap:14px;align-items:center}
-.cc .t{font:700 11px var(--mono);padding:4px 8px;border-radius:6px;white-space:nowrap}
-.cc.r{background:var(--red-bg);border:2px solid rgba(255,93,108,.45)}.cc.r .t{background:var(--red);color:#22050a}
-.cc.g{background:var(--green-bg);border:2px solid rgba(63,214,138,.45)}.cc.g .t{background:var(--green);color:#03170c}
-.cc code{font:600 14px var(--mono);color:var(--muted);margin-left:auto;white-space:pre;text-align:right}
+.msg.bot{background:var(--panel2);border:1px solid var(--line2);align-self:flex-start}
+.msg.lead{background:#22324d;align-self:flex-end}
+.msg.x{border-color:rgba(240,100,111,.55)}
+.msg small{display:block;font:500 11px var(--mono);color:var(--red);margin-top:3px}
+.msg.okm small{color:var(--green)}
 
 /* tests */
-.tests{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start}
-.grid{display:grid;grid-template-columns:repeat(20,20px);gap:5px}
-.dot{width:20px;height:20px;border-radius:5px;background:var(--line);transition:background .2s}
-.dot.p{background:var(--green)}.dot.f{background:var(--red)}
-.score{font:700 15px var(--mono);margin-top:14px;color:var(--muted)}
-.score b{font-size:26px}
-.checks div{font:600 14.5px var(--mono);color:var(--muted);padding:7px 0;border-bottom:1px solid var(--line)}
-.flow{display:flex;gap:10px;margin-top:16px;align-items:center;opacity:0;transition:opacity .5s}
-.flow.on{opacity:1}
-.flow span{font:700 13px var(--mono);padding:8px 11px;border-radius:9px;background:var(--green-bg);color:var(--green);border:1px solid rgba(63,214,138,.4);white-space:nowrap}
-.flow i{color:var(--dim);font-style:normal}
-
-#hint{position:fixed;left:18px;bottom:12px;font:600 12px var(--mono);color:var(--dim)}
-#count{position:fixed;right:18px;bottom:12px;font:700 13px var(--mono);color:var(--dim)}
+.tests{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start}
+@media(max-width:820px){.tests{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:repeat(20,16px);gap:4px}
+.sq{width:16px;height:16px;border-radius:3px;background:var(--line)}
+.sq.p{background:var(--green)}.sq.f{background:var(--red)}
+.score{font:500 14px var(--mono);margin-top:12px;color:var(--muted)}
+.score b{font-size:22px;font-weight:700}
+.crit div{font:400 13.5px var(--mono);color:var(--muted);padding:7px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.crit .r{color:var(--red)}.crit .g{color:var(--green)}
+.ship{display:flex;gap:6px;align-items:center;margin-top:16px;flex-wrap:wrap;font:500 12.5px var(--mono);color:var(--dim)}
+.ship span{padding:6px 10px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
+.ship span.on{border-color:rgba(78,201,138,.5);color:var(--green)}
+.ship span.no{border-color:rgba(240,100,111,.5);color:var(--red)}
+footer{margin-top:14px;font-size:12.5px;color:var(--dim)}
 </style>
 </head>
 <body>
-<div id="stage">
-  <div class="title"><b>AI SETTER</b> · DEBUG MAP</div>
+<div class="wrap">
+  <header>
+    <div><h1>AI setter: debugging one bad change</h1><p>Click a box or a log to inspect it.</p></div>
+    <div class="status" id="status">v1 · healthy</div>
+  </header>
 
-  <svg class="arc"><path d="M 945 118 C 945 60, 340 60, 340 118" fill="none" stroke="#283041" stroke-width="2.5" stroke-dasharray="6 6"/><path d="M 334 108 L 340 120 L 346 108" fill="none" stroke="#283041" stroke-width="2.5"/></svg>
-  <div class="arclbl">↺ answers saved back into memory</div>
+  <div class="tools">
+    <button class="tb" id="bAdd">Add new question</button>
+    <button class="tb" id="bFix" disabled>Apply fix</button>
+    <button class="tb" id="bTest">Run 100 replays</button>
+    <button class="tb ghost" id="bReset">Reset</button>
+  </div>
 
-  <div class="wire"></div><div id="packet"></div>
+  <div class="diagram" id="diagram">
+    <svg class="loopback" viewBox="0 0 1000 60" preserveAspectRatio="none"><path d="M 770 46 C 770 16, 250 16, 250 46" fill="none" stroke="#323946" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/></svg>
+    <div class="loopback"><span>answers written back to memory</span></div>
+    <div class="row">
+      <div class="node" data-n="lead"><span class="flag"></span><div class="no">01</div><h3>Lead message</h3><p>SMS / DM in</p></div>
+      <div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="mem"><span class="flag"></span><div class="no">02</div><h3>Load memory</h3><p>answers, current_step</p></div>
+      <div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="prompt"><span class="flag"></span><div class="no">03</div><h3>Build prompt</h3><p>rules + history + known</p><div class="tagnew">+ new question</div></div>
+      <div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="llm"><span class="flag"></span><div class="no">04</div><h3>LLM call</h3><p>reply + extracted fields</p></div>
+      <div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="save"><span class="flag"></span><div class="no">05</div><h3>Parse + save</h3><p>JSON → DB</p></div>
+      <div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="send"><span class="flag"></span><div class="no">06</div><h3>Send reply</h3><p>message out</p></div>
+    </div>
+    <div class="probes">
+      <div class="slot"></div><div class="gap"></div>
+      <div class="slot"><button class="probe" data-p="db">log: db row <i>3</i></button></div><div class="gap"></div>
+      <div class="slot"><button class="probe" data-p="in">log: payload in <i>1</i></button></div><div class="gap"></div>
+      <div class="slot"><button class="probe" data-p="out">log: llm output <i>2</i></button></div><div class="gap"></div>
+      <div class="slot"></div><div class="gap"></div>
+      <div class="slot"><button class="probe" data-p="chat">conversation</button></div>
+    </div>
+  </div>
 
-  <div class="node" id="n0" style="left:50px"><div class="ic">💬</div><h3>Lead texts</h3><p>"Budget's $200"</p></div>
-  <div class="node" id="n1" style="left:252px"><span class="chip" id="c1"></span><div class="ic">🗂️</div><h3>Load memory</h3><p>answers<br>current_step</p></div>
-  <div class="node" id="n2" style="left:454px"><span class="chip" id="c2"></span><div class="ic">🧱</div><h3>Build prompt</h3><p>rules + history<br>+ known answers</p></div>
-  <div class="node" id="n3" style="left:656px"><div class="ic">🤖</div><h3>LLM call</h3><p>writes reply<br>+ extracts fields</p></div>
-  <div class="node" id="n4" style="left:858px"><span class="chip" id="c4"></span><div class="ic">💾</div><h3>Parse + save</h3><p>JSON → DB</p></div>
-  <div class="node" id="n5" style="left:1060px"><span class="chip" id="c5"></span><div class="ic">📤</div><h3>Send reply</h3><p>SMS / DM</p></div>
-
-  <div class="probe" id="pr1" style="left:252px"><div class="ring">🔍</div><div class="lb">LOG 3</div></div>
-  <div class="probe" id="pr2" style="left:454px"><div class="ring">🔍</div><div class="lb">LOG 1</div></div>
-  <div class="probe" id="pr3" style="left:656px"><div class="ring">🔍</div><div class="lb">LOG 2</div></div>
-
-  <div id="cap"><span class="n" id="capn"></span><span id="capt"></span></div>
-
-  <!-- panel: symptom -->
-  <div class="panel" id="p-chat"><div class="box"><div class="hd"><span>WHAT THE LEAD SEES</span><span>after adding 1 question</span></div>
-    <div class="chat">
-      <div class="msg bot x">What's your biggest challenge right now?<span class="tg">NO INTRO ❌</span></div>
-      <div class="msg lead">Staying consistent. Budget's about $200/mo btw</div>
-      <div class="msg bot x">Got it! What's your monthly budget?<span class="tg">RE-ASKED ❌</span></div>
-      <div class="msg lead">…I just told you 😐</div>
-    </div></div></div>
-
-  <!-- panel: payload in -->
-  <div class="panel" id="p-in"><div class="box"><div class="hd"><span>LOG 1 · PAYLOAD SENT INTO THE LLM</span><span>lead: sarah · turn 4</span></div>
-<div class="code"><span class="k">system:</span>  <span class="s hl">"FIRST: ask biggest challenge…"</span>     <span class="why">← new line sits on top of the rules</span>
-         <span class="s">"Always start with intro…"</span>
-<span class="k">history:</span> <span class="s hl">[ last 2 messages only ]</span>             <span class="why">← older turns cut off</span>
-<span class="k">known:</span>   <span class="s hl">{ budget: null }</span>                     <span class="why">← she said $200!</span>
-<span class="k">step:</span>    <span class="s hl">2  →  "Budget"</span>                      <span class="why">← should be "Timeline"</span></div></div></div>
-
-  <!-- panel: output -->
-  <div class="panel" id="p-out"><div class="box"><div class="hd"><span>LOG 2 · WHAT THE LLM SENT BACK</span><span>raw response → parser</span></div>
-<div class="code"><span class="k">raw:</span>     <span class="s">{ "challenge": "consistency", <span class="hl">"Budget"</span>: "$200/mo" }</span>
-<span class="k">parser:</span>  expects <span class="s">"budget"</span>  →  <span class="bad">KeyError</span>
-<span class="k">code:</span>    <span class="s hl">except: pass</span>                         <span class="why">← error swallowed</span>
-<span class="k">saved:</span>   <span class="bad">{ }</span>                                  <span class="why">← nothing reaches memory</span></div></div></div>
-
-  <!-- panel: db -->
-  <div class="panel" id="p-db"><div class="cols">
-    <div class="box"><div class="hd"><span>LOG 3 · DB ROW: SARAH</span><span>what memory holds</span></div>
-<div class="code"><span class="k">current_step:</span> <span class="s">2</span>
-<span class="k">answers:</span>      <span class="bad">{ }</span>
-<span class="k">intro_sent:</span>   <span class="bad">false</span></div></div>
-    <div class="box"><div class="hd"><span>QUESTION LIST</span><span>before → after the change</span></div>
-<div class="code"><span class="k">0</span>  Intro      →  <span class="hl s">Challenge (new)</span>
-<span class="k">1</span>  Budget     →  Intro
-<span class="k">2</span>  <span class="ok">Timeline</span>   →  <span class="bad">Budget</span>   <span class="why">← Sarah lands here</span>
-<span class="k">3</span>  Decider    →  Timeline</div></div>
-  </div></div>
-
-  <!-- panel: causes -->
-  <div class="panel" id="p-cause"><div class="box"><div class="hd"><span>ROOT CAUSES</span><span>from the 3 logs</span></div>
-    <div class="cc r"><span class="t">CAUSE 1</span>Memory tracked by position. New question shifts every step.<code>step = 2</code></div>
-    <div class="cc r"><span class="t">CAUSE 2</span>Prompt-only rules. "FIRST: ask…" beats "intro" + "never re-ask".<code>FIRST: ask…</code></div>
-    <div class="cc r" style="opacity:.8"><span class="t">+ MADE WORSE BY</span>Parser fails silently, so answers are never saved.<code>except: pass</code></div>
-  </div></div>
-
-  <!-- panel: fix -->
-  <div class="panel" id="p-fix"><div class="box"><div class="hd"><span>THE FIX</span><span>code holds memory · LLM just talks</span></div>
-    <div class="cc g"><span class="t">MEMORY</span>Save answers by name, not position<code>answers.budget = "$200"</code></div>
-    <div class="cc g"><span class="t">PROMPT</span>Code tells the LLM what's known + what's left<code>KNOWN: budget · NEEDED: timeline</code></div>
-    <div class="cc g"><span class="t">INTRO + SAVE</span>Intro sent by code. Parser validates + alerts<code>if !intro_sent: send(INTRO)</code></div>
-  </div></div>
-
-  <!-- panel: tests -->
-  <div class="panel" id="p-test"><div class="box"><div class="hd"><span>REPLAY TEST · 100 REAL CHATS THROUGH THE PIPELINE</span><span id="tver">version: broken</span></div>
-    <div class="tests">
-      <div><div class="grid" id="grid"></div><div class="score" id="score">running…</div></div>
-      <div class="checks"><div>✓ intro on turn 1</div><div>✓ never asks a known answer</div><div>✓ every answer saved</div><div>✓ booking link sent</div>
-        <div class="flow" id="flow"><span>100/100</span><i>→</i><span>shadow</span><i>→</i><span>10% canary</span><i>→</i><span>monitor + auto-rollback</span></div></div>
-    </div></div></div>
+  <div class="inspector">
+    <div class="ihead"><span id="ititle">inspector</span><span id="imeta"></span></div>
+    <div class="ibody" id="ibody"></div>
+  </div>
+  <footer>Example lead and business are made up.</footer>
 </div>
-<div id="hint">→ next · ← back</div><div id="count"></div>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);$('#stage').style.transform=`translate(-50%,-50%) scale(${s})`}
-addEventListener('resize',fit);fit();
-const grid=$('#grid');for(let i=0;i<100;i++){const d=document.createElement('div');d.className='dot';grid.appendChild(d)}
+let state='healthy'; // healthy | broken | fixed
+let sel=null, seen=new Set(), tested={}, runId=0;
 
-let run=0;
-async function runTests(fixed){
-  const id=++run,ds=$$('.dot');ds.forEach(d=>d.className='dot');$('#flow').classList.remove('on');
-  $('#tver').textContent='version: '+(fixed?'fixed':'broken');$('#score').textContent='running…';
-  const fail=new Set();if(!fixed){let s=7;while(fail.size<62){s=(s*37+11)%100;fail.add(s)}}
-  let pass=0;
-  for(let i=0;i<100;i++){if(id!==run)return;const f=fail.has(i);ds[i].classList.add(f?'f':'p');if(!f)pass++;if(i%4===3)await wait(25)}
-  $('#score').innerHTML=fixed?`<b class="g" style="color:var(--green)">100/100</b> pass → safe to ship`:`<b style="color:var(--red)">${pass}/100</b> pass → <span style="color:var(--red)">blocked</span>`;
-  if(fixed){await wait(300);$('#flow').classList.add('on')}
+const NODES={
+ lead:{t:'01 · lead message',d:{all:`<p class="note">The lead's text arrives by webhook. Nothing to change here.</p><pre><span class="k">from:</span> <span class="v">sarah</span>\n<span class="k">text:</span> <span class="v">"Staying consistent. Budget's about $200/mo btw"</span></pre>`}},
+ mem:{t:'02 · load memory',d:{
+  healthy:`<p class="note">Reads what we already know about this lead from the DB.</p><pre><span class="k">current_step:</span> <span class="v">2</span>   <span class="c">// index in the question list</span>\n<span class="k">answers:</span> <span class="v">{ q1: "$200/mo" }</span></pre>`,
+  broken:`<p class="note"><b>Broken.</b> Progress is stored as a <b>position</b>. The new question was inserted at position 0, so every saved step now points one question too early.</p><pre><span class="k">current_step:</span> <span class="m">2</span>   <span class="r">// used to mean Timeline, now means Budget</span>\n<span class="k">answers:</span> <span class="m">{ }</span>   <span class="r">// nothing saved this turn</span></pre>`,
+  fixed:`<p class="note"><b>Fixed.</b> Answers are keyed by name. Code works out what's left. Adding a question never shifts anything.</p><pre><span class="k">answers:</span> <span class="v">{ challenge: "consistency", budget: "$200/mo" }</span>\n<span class="k">needed:</span>  <span class="g">[ "timeline", "decision_maker" ]</span>   <span class="c">// computed in code</span></pre>`}},
+ prompt:{t:'03 · build prompt',d:{
+  healthy:`<p class="note">Assembles rules, chat history and known answers into one request.</p><pre><span class="c">rules:</span>   always intro · never re-ask · then book\n<span class="c">history:</span> full conversation\n<span class="c">known:</span>   from memory</pre>`,
+  broken:`<p class="note"><b>Broken.</b> The new question was pasted in as <b>"FIRST: ask…"</b>. The model follows the most direct instruction, so "intro first" and "never re-ask" lose. The longer prompt also pushed old messages past the token limit.</p><pre><span class="m">FIRST: ask "What's your biggest challenge?"</span>\n<span class="c">1. Always start with the intro.          ← overridden</span>\n<span class="c">2. Never re-ask what's already known.    ← overridden</span></pre>`,
+  fixed:`<p class="note"><b>Fixed.</b> The prompt no longer controls the order. Code passes exactly what's known and what's next. The intro is a coded step.</p><pre><span class="g">if not lead.intro_sent: send(INTRO); lead.intro_sent = True</span>\n\n<span class="k">KNOWN:</span>        <span class="v">challenge=consistency, budget=$200/mo</span>\n<span class="k">STILL NEEDED:</span> <span class="v">timeline</span>\n<span class="c">Never ask about anything under KNOWN.</span></pre>`}},
+ llm:{t:'04 · llm call',d:{all:`<p class="note">The model only knows what step 03 gives it. If the input is wrong, the output is wrong. Open <b>log: llm output</b> to see what came back.</p>`}},
+ save:{t:'05 · parse + save',d:{
+  healthy:`<p class="note">Takes the fields from the LLM's JSON and writes them to memory.</p><pre><span class="k">schema:</span> <span class="v">{ budget, timeline, decision_maker }</span></pre>`,
+  broken:`<p class="note"><b>Broken.</b> The schema changed with the new question, the keys don't match, and the error is swallowed. Nothing is saved and nobody is alerted.</p><pre><span class="v">try:</span> parse(json)\n<span class="m">except: pass</span>   <span class="r">// silent → saved { }</span></pre>`,
+  fixed:`<p class="note"><b>Fixed.</b> Output is validated against the schema. A failure retries once, then alerts.</p><pre><span class="g">validate(json, SCHEMA)</span>  → on fail: retry → alert #setter-errors</pre>`}},
+ send:{t:'06 · send reply',d:{all:`<p class="note">Sends the message. Open <b>conversation</b> to see what the lead got.</p>`}}
+};
+const LOGS={
+ in:{t:'log 1 · payload sent into the llm',m:'lead: sarah · turn 4',d:{
+  healthy:`<pre><span class="k">system:</span>  <span class="v">"Always start with intro… Never re-ask…"</span>\n<span class="k">history:</span> <span class="v">[ 6 messages ]</span>\n<span class="k">known:</span>   <span class="v">{ budget: "$200/mo" }</span>\n<span class="k">step:</span>    <span class="v">2 → "Timeline"</span></pre>`,
+  broken:`<p class="note">First thing I check: the <b>exact</b> request the model received on a bad turn.</p><pre><span class="k">system:</span>  <span class="m">"FIRST: ask biggest challenge…"</span>   <span class="r">← new line on top of the rules</span>\n         <span class="v">"Always start with intro…"</span>\n<span class="k">history:</span> <span class="m">[ last 2 messages ]</span>                 <span class="r">← older turns cut off</span>\n<span class="k">known:</span>   <span class="m">{ budget: null }</span>                    <span class="r">← she said $200</span>\n<span class="k">step:</span>    <span class="m">2 → "Budget"</span>                       <span class="r">← should be Timeline</span></pre>`,
+  fixed:`<pre><span class="k">system:</span>  <span class="v">rules (order handled in code)</span>\n<span class="k">history:</span> <span class="v">[ full conversation ]</span>        <span class="g">← reserved in token budget</span>\n<span class="k">KNOWN:</span>   <span class="v">challenge, budget</span>\n<span class="k">NEEDED:</span>  <span class="v">timeline</span></pre>`}},
+ out:{t:'log 2 · what the llm sent back',m:'raw response → parser',d:{
+  healthy:`<pre><span class="k">raw:</span>    <span class="v">{ "budget": "$200/mo" }</span>\n<span class="k">saved:</span>  <span class="g">{ budget: "$200/mo" } ✓</span></pre>`,
+  broken:`<p class="note">Then: what came back, and did it actually get saved?</p><pre><span class="k">raw:</span>     <span class="v">{ "challenge": "consistency", <span class="m">"Budget"</span>: "$200/mo" }</span>\n<span class="k">parser:</span>  expects "budget" → <span class="r">KeyError</span>\n<span class="k">code:</span>    <span class="m">except: pass</span>                          <span class="r">← swallowed</span>\n<span class="k">saved:</span>   <span class="r">{ }</span></pre>`,
+  fixed:`<pre><span class="k">raw:</span>    <span class="v">{ "challenge": "consistency", "budget": "$200/mo" }</span>\n<span class="k">schema:</span> <span class="g">valid ✓</span>\n<span class="k">saved:</span>  <span class="g">{ challenge, budget } ✓</span></pre>`}},
+ db:{t:'log 3 · db row for this lead',m:'what memory really holds',d:{
+  healthy:`<pre><span class="k">current_step:</span> <span class="v">2</span>  → Timeline\n<span class="k">answers:</span>      <span class="v">{ q1: "$200/mo" }</span>\n<span class="k">intro_sent:</span>   <span class="v">true</span></pre>`,
+  broken:`<p class="note">Last: the DB row. This explains <b>both</b> symptoms.</p><div class="two"><pre><span class="k">current_step:</span> <span class="m">2</span>\n<span class="k">answers:</span>      <span class="r">{ }</span>\n<span class="k">intro_sent:</span>   <span class="r">false</span></pre><pre><span class="c">question list  before → after</span>\n<span class="k">0</span>  Intro      → <span class="a">Challenge (new)</span>\n<span class="k">1</span>  Budget     → Intro\n<span class="k">2</span>  <span class="g">Timeline</span>   → <span class="r">Budget</span>   <span class="r">← re-ask</span>\n<span class="c">new leads start at 0 → no intro</span></pre></div>`,
+  fixed:`<pre><span class="k">answers:</span>    <span class="v">{ challenge: "consistency", budget: "$200/mo" }</span>\n<span class="k">intro_sent:</span> <span class="g">true</span>\n<span class="k">needed:</span>     <span class="g">[ timeline, decision_maker ]</span></pre>`}},
+ chat:{t:'conversation',m:'what the lead sees',d:{}}
+};
+const CHATS={
+ healthy:[['bot','Hey Sarah, Alex from Northside Fitness here. Thanks for reaching out! Two quick questions?'],['lead','Sure'],['bot',"What's your monthly budget?"],['lead','About $200/mo'],['bot','Great. When would you like to start?']],
+ broken:[['bot',"What's your biggest challenge right now?",'x','no intro'],['lead',"Staying consistent. Budget's about $200/mo btw"],['bot',"Got it! What's your monthly budget?",'x','re-asked'],['lead','…I just told you']],
+ fixed:[['bot','Hey Sarah, Alex from Northside Fitness here. Thanks for reaching out! A few quick questions?','okm','intro (coded step)'],['lead','Sure'],['bot',"What's your biggest challenge right now?"],['lead',"Staying consistent. Budget's about $200/mo btw"],['bot','Makes sense, and $200/mo works. When would you like to start?','okm','used known answer']]
+};
+
+function pick(d){return d[state]||d.all||d.healthy}
+function render(){
+  const D=$('#diagram');D.classList.toggle('isbad',state==='broken');D.classList.toggle('isok',state==='fixed');
+  const st=$('#status');st.className='status'+(state==='broken'?' bad':state==='fixed'?' ok':'');
+  st.textContent=state==='healthy'?'v1 · healthy':state==='broken'?'v2 · new question · leads complaining':'v3 · fixed';
+  const bad=['mem','prompt','save'];
+  $$('.node').forEach(n=>{const k=n.dataset.n;n.className='node'+(sel===k?' sel':'')+(state==='broken'&&bad.includes(k)&&seen.size>=3?' bad':'')+(state==='fixed'&&bad.includes(k)?' ok':'')+(state!=='healthy'&&k==='prompt'?' changed':'')});
+  $$('.probe').forEach(p=>{const k=p.dataset.p;p.className='probe'+(sel===k?' sel':'')+(state==='broken'&&seen.has(k)&&k!=='chat'?' seen':'')});
+  $('#bAdd').disabled=state!=='healthy';$('#bAdd').classList.toggle('done',state!=='healthy');
+  $('#bFix').disabled=state!=='broken';$('#bFix').classList.toggle('done',state==='fixed');
+  suggest();
+}
+function suggest(){
+  $$('.sug').forEach(e=>e.classList.remove('sug'));
+  let t=null;
+  if(state==='healthy')t=$('#bAdd');
+  else if(state==='broken'){const order=['in','out','db'];const nx=order.find(k=>!seen.has(k));
+    if(nx)t=$(`.probe[data-p="${nx}"]`);else if(!tested.broken)t=$('#bTest');else t=$('#bFix')}
+  else if(state==='fixed'&&!tested.fixed)t=$('#bTest');
+  if(t&&!(t.classList.contains('sel')))t.classList.add('sug');
+}
+function open(kind,key){
+  sel=key;runId++;
+  const src=kind==='node'?NODES[key]:LOGS[key];
+  $('#ititle').innerHTML='<b>'+src.t+'</b>';$('#imeta').textContent=src.m||'';
+  const b=$('#ibody');b.style.animation='none';b.offsetWidth;b.style.animation='';
+  if(key==='chat'){showChat();}
+  else b.innerHTML=pick(src.d);
+  if(kind==='log'&&state==='broken')seen.add(key);
+  if(kind==='log'&&state==='broken'&&seen.has('in')&&seen.has('out')&&seen.has('db')&&key==='db'){
+    b.innerHTML+=`<p class="note" style="margin-top:14px"><b>Found it.</b> Two causes: memory tracked by position (02), and order rules living only in the prompt (03). Made worse by the silent parser (05). They're now marked red in the diagram.</p>`}
+  render();
+}
+async function showChat(){
+  const id=runId,b=$('#ibody');
+  b.innerHTML='<div class="chat">'+CHATS[state].map(m=>`<div class="msg ${m[0]} ${m[2]||''}">${m[1]}${m[3]?'<small>'+m[3]+'</small>':''}</div>`).join('')+'</div>';
+  for(const m of b.querySelectorAll('.msg')){await wait(380);if(id!==runId)return;m.classList.add('on')}
+}
+async function runTests(){
+  sel=null;const id=++runId,v=state;render();
+  const rate={healthy:100,broken:38,fixed:100}[v];
+  $('#ititle').innerHTML='<b>replay test · 100 real past conversations through this version</b>';$('#imeta').textContent=v==='healthy'?'v1':v==='broken'?'v2':'v3';
+  const crit=v==='broken'?[['intro on turn 1','0/100','r'],['never asks a known answer','41/100','r'],['every answer saved','38/100','r'],['booking link sent','71/100','r']]:[['intro on turn 1','100/100','g'],['never asks a known answer','100/100','g'],['every answer saved','100/100','g'],['booking link sent','100/100','g']];
+  $('#ibody').innerHTML=`<div class="tests"><div><div class="grid" id="grid">${'<div class="sq"></div>'.repeat(100)}</div><div class="score" id="score">running…</div></div>
+   <div><div class="crit">${crit.map(c=>`<div><span>${c[0]}</span><span class="cr ${c[2]}" style="opacity:0">${c[1]}</span></div>`).join('')}</div><div class="ship" id="ship" style="opacity:0"></div></div></div>`;
+  const fail=new Set();if(rate<100){let s=7;while(fail.size<100-rate){s=(s*37+11)%100;fail.add(s)}}
+  const sq=$$('.sq');
+  for(let i=0;i<100;i++){if(id!==runId)return;sq[i].classList.add(fail.has(i)?'f':'p');if(i%5===4)await wait(22)}
+  $$('.cr').forEach(c=>c.style.opacity=1);
+  $('#score').innerHTML=rate===100?`<b style="color:var(--green)">100/100</b> passed`:`<b style="color:var(--red)">${rate}/100</b> passed · deploy blocked`;
+  const sh=$('#ship');sh.innerHTML=rate===100
+    ?'<span class="on">replay 100/100</span>→<span class="on">shadow (drafts only)</span>→<span class="on">10% canary · 24h</span>→<span class="on">monitor + auto-rollback</span>'
+    :'<span class="no">replay '+rate+'/100</span>→<span>shadow</span>→<span>canary</span>→<span>live</span><span style="border:0;color:var(--red)">stopped here, no client saw it</span>';
+  sh.style.opacity=1;tested[v]=true;suggest();
 }
 
-const S=[
- {cap:'Every lead message runs through this pipeline'},
- {cap:'We add 1 question → it re-asks + skips intro',panel:'p-chat',packet:'red',chips:{c2:['amber','+ new question']},anim:async()=>{for(const m of $$('#p-chat .msg')){await wait(450);m.classList.add('on')}}},
- {cap:'I don’t guess. I put a log at every step.',packet:'red',chips:{c2:['amber','+ new question']},probes:true},
- {cap:'Log 1 · what goes INTO the prompt',panel:'p-in',packet:'red',chips:{c2:['amber','+ new question']},probes:true,lit:['pr2','n2']},
- {cap:'Log 2 · what comes OUT of the LLM',panel:'p-out',packet:'red',chips:{c2:['amber','+ new question']},probes:true,lit:['pr3','n3']},
- {cap:'Log 3 · what’s actually saved',panel:'p-db',packet:'red',chips:{c2:['amber','+ new question']},probes:true,lit:['pr1','n1']},
- {cap:'Found it: 2 causes',panel:'p-cause',packet:'red',probes:true,bad:['n1','n2','n4'],chips:{c1:['red','✗ tracked by position'],c2:['red','✗ rule overridden'],c4:['red','✗ fails silently']}},
- {cap:'Fix: code holds memory, LLM just talks',panel:'p-fix',packet:'green',probes:true,fix:['n1','n2','n4'],chips:{c1:['green','✓ by name'],c2:['green','✓ known / needed'],c4:['green','✓ validate + alert']}},
- {cap:'Before shipping: replay 100 real chats',panel:'p-test',packet:'red',probes:true,anim:()=>runTests(false)},
- {cap:'Ship only at 100/100. Then canary + auto-rollback.',panel:'p-test',packet:'green',probes:true,fix:['n1','n2','n4','n5'],chips:{c5:['green','✓ tested']},anim:()=>runTests(true)},
-];
-let si=0;
-function render(i){
-  const s=S[i];si=i;run++;
-  $('#capn').textContent=(i+1)+'/'+S.length;$('#capt').textContent=s.cap;
-  const c=$('#cap');c.classList.remove('anim');c.offsetWidth;c.classList.add('anim');
-  $$('.panel').forEach(p=>p.classList.toggle('on',p.id===s.panel));
-  $$('#p-chat .msg').forEach(m=>m.classList.remove('on'));
-  $('#packet').className=s.packet||'';
-  $$('.node').forEach(n=>n.className='node'+((s.bad||[]).includes(n.id)?' bad':'')+((s.fix||[]).includes(n.id)?' fix':'')+((s.lit||[]).includes(n.id)?' lit':''));
-  $$('.chip').forEach(ch=>{const v=(s.chips||{})[ch.id];ch.className='chip'+(v?' '+v[0]+' on':'');if(v)ch.textContent=v[1]});
-  $$('.probe').forEach(p=>p.className='probe'+(s.probes?' on':'')+((s.lit||[]).includes(p.id)?' lit':''));
-  $('#count').textContent=(i+1)+' / '+S.length;
-  if(s.anim)s.anim();
-}
-const next=()=>{if(si<S.length-1)render(si+1)},prev=()=>{if(si>0)render(si-1)};
-addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next()}if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}});
-addEventListener('click',e=>{e.clientX<innerWidth*.25?prev():next()});
-const m=location.hash.match(/^#([0-9]+)/);render(m?Math.min(+m[1]-1,S.length-1):0);
+$$('.node').forEach(n=>n.onclick=()=>open('node',n.dataset.n));
+$$('.probe').forEach(p=>p.onclick=()=>open('log',p.dataset.p));
+$('#bAdd').onclick=()=>{state='broken';seen.clear();open('log','chat')};
+$('#bFix').onclick=()=>{state='fixed';open('log','chat')};
+$('#bTest').onclick=runTests;
+$('#bReset').onclick=()=>{state='healthy';seen.clear();tested={};sel=null;runId++;$('#ititle').innerHTML='inspector';$('#imeta').textContent='';$('#ibody').innerHTML='<div class="empty">Click any box or log above.</div>';render()};
+$('#bReset').onclick();
 </script>
 </body>
 </html>
