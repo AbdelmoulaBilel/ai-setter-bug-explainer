@@ -12,109 +12,120 @@
 --blue:#6ea8fe;--green:#4ec98a;--red:#f0646f;--amber:#e9ae4f;--mono:'JetBrains Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif;min-height:100vh}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 40px}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
-header h1{font-size:20px;font-weight:700}
-header p{color:var(--muted);font-size:14px;margin-top:2px}
-.status{font:500 13px var(--mono);padding:6px 12px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
+.wrap{max-width:1220px;margin:0 auto;padding:24px 24px 36px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+header h1{font-size:19px;font-weight:700}
+.status{font:500 12.5px var(--mono);padding:6px 11px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
 .status.bad{color:var(--red);border-color:rgba(240,100,111,.4)}
 .status.ok{color:var(--green);border-color:rgba(78,201,138,.4)}
 
-/* toolbar */
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.tb{font:500 14px Inter,sans-serif;background:var(--panel2);color:var(--text);border:1px solid var(--line2);border-radius:7px;padding:9px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tb{font:500 14px Inter,sans-serif;background:var(--panel2);color:var(--text);border:1px solid var(--line2);border-radius:7px;padding:8px 14px;cursor:pointer;transition:border-color .15s}
 .tb:hover:not(:disabled){border-color:var(--blue)}
 .tb:disabled{opacity:.35;cursor:default}
-.tb.done{color:var(--muted)}
-.tb.sug{border-color:var(--blue);animation:sug 1.8s ease-in-out infinite}
-@keyframes sug{0%,100%{box-shadow:0 0 0 0 rgba(110,168,254,.0)}50%{box-shadow:0 0 0 4px rgba(110,168,254,.22)}}
 .tb.ghost{background:transparent;color:var(--muted);margin-left:auto}
+.sug{border-color:var(--blue)!important;animation:sug 1.8s ease-in-out infinite}
+@keyframes sug{0%,100%{box-shadow:0 0 0 0 rgba(110,168,254,0)}50%{box-shadow:0 0 0 4px rgba(110,168,254,.22)}}
 
 /* diagram */
-.diagram{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:46px 22px 20px}
-.loopback{position:absolute;left:0;top:0;width:100%;height:60px;pointer-events:none}
-.loopback span{position:absolute;top:6px;left:50%;transform:translateX(-50%);font:400 11.5px var(--mono);color:var(--dim);background:var(--panel);padding:0 8px}
-.row{display:flex;align-items:stretch;position:relative}
-.node{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:12px 12px 11px;cursor:pointer;position:relative;transition:border-color .2s,background .2s;text-align:left}
+.diagram{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:40px 20px 18px}
+.loopback{position:absolute;left:0;top:0;width:100%;height:54px;pointer-events:none}
+.looplbl{position:absolute;top:5px;left:50%;transform:translateX(-50%);font:400 11px var(--mono);color:var(--dim);background:var(--panel);padding:0 8px}
+.row{display:flex;align-items:stretch}
+.node{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:11px 12px 10px;cursor:pointer;position:relative;transition:all .25s}
 .node:hover{border-color:var(--blue)}
 .node .no{font:500 11px var(--mono);color:var(--dim)}
-.node h3{font-size:14.5px;font-weight:600;margin-top:2px}
-.node p{font:400 11.5px/1.4 var(--mono);color:var(--muted);margin-top:4px}
-.node.sel{border-color:var(--blue);background:#1a2130}
-.node.bad{border-color:rgba(240,100,111,.6)}
-.node.bad .no{color:var(--red)}
-.node.ok{border-color:rgba(78,201,138,.55)}
-.node.ok .no{color:var(--green)}
-.node .flag{position:absolute;right:8px;top:9px;width:8px;height:8px;border-radius:50%;display:none}
-.node.bad .flag{display:block;background:var(--red)}
-.node.ok .flag{display:block;background:var(--green)}
-.node .tagnew{display:none;margin-top:6px;font:500 11px var(--mono);color:var(--amber)}
+.node h3{font-size:14px;font-weight:600;margin-top:1px}
+.node p{font:400 11.5px/1.4 var(--mono);color:var(--muted);margin-top:3px}
+.node.sel{border-color:var(--blue);background:#1a2130;transform:translateY(-2px)}
+.node.bad{border-color:rgba(240,100,111,.65)} .node.bad .no{color:var(--red)}
+.node.ok{border-color:rgba(78,201,138,.6)} .node.ok .no{color:var(--green)}
+.node .tagnew{display:none;margin-top:5px;font:500 11px var(--mono);color:var(--amber)}
 .node.changed .tagnew{display:block}
-.conn{width:26px;flex-shrink:0;position:relative}
+.conn{width:24px;flex-shrink:0;position:relative}
 .conn:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line2)}
-.conn:after{content:"";position:absolute;right:0;top:calc(50% - 4px);border:4px solid transparent;border-left-color:var(--line2);border-right:0}
 .dot{position:absolute;top:calc(50% - 3px);left:0;width:6px;height:6px;border-radius:50%;background:var(--blue);animation:mv 1.2s linear infinite}
 .diagram.isbad .dot{background:var(--red)} .diagram.isok .dot{background:var(--green)}
-@keyframes mv{from{left:0;opacity:0}30%{opacity:1}to{left:20px;opacity:0}}
+@keyframes mv{from{left:0;opacity:0}30%{opacity:1}to{left:18px;opacity:0}}
+@media(max-width:860px){.row{flex-direction:column}.conn{height:14px;width:auto}.conn:before{left:50%;top:0;bottom:0;border-top:0;border-left:1px solid var(--line2)}.dot{display:none}}
 
-/* probes */
-.probes{display:flex;margin-top:10px}
-.slot{flex:1;display:flex;justify-content:center}
-.gap{width:26px;flex-shrink:0}
-.probe{font:500 12px var(--mono);color:var(--muted);background:transparent;border:1px dashed var(--line2);border-radius:6px;padding:5px 10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
-.probe:hover{color:var(--text);border-color:var(--blue)}
-.probe.sel{color:var(--text);border-style:solid;border-color:var(--blue);background:#1a2130}
-.probe.sug{border-color:var(--blue);color:var(--text);animation:sug 1.8s ease-in-out infinite}
-.probe.seen:before{content:"✓";color:var(--green)}
-.probe i{font-style:normal;color:var(--dim)}
+/* bottom */
+.bottom{display:grid;grid-template-columns:330px 1fr;gap:14px;margin-top:14px}
+@media(max-width:860px){.bottom{grid-template-columns:1fr}}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);font:500 12.5px var(--mono);color:var(--muted);min-height:42px}
+.chead b{color:var(--text);font-weight:500}
+.mini{font:500 12px var(--mono);background:transparent;border:1px solid var(--line2);color:var(--muted);border-radius:5px;padding:3px 8px;cursor:pointer}
+.mini:hover{color:var(--text);border-color:var(--blue)}
 
-/* inspector */
-.inspector{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;min-height:330px;overflow:hidden}
-.ihead{display:flex;justify-content:space-between;gap:12px;padding:11px 18px;border-bottom:1px solid var(--line);font:500 12.5px var(--mono);color:var(--muted)}
-.ihead b{color:var(--text);font-weight:500}
-.ibody{padding:18px 20px;animation:fade .25s ease}
+.sus{list-style:none}
+.sus li{padding:12px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;display:flex;gap:10px;align-items:flex-start;opacity:0;transform:translateX(-8px);animation:in .35s forwards}
+.sus li:hover{background:var(--panel2)}
+.sus li.sel{background:#1a2130;box-shadow:inset 3px 0 0 var(--blue)}
+@keyframes in{to{opacity:1;transform:none}}
+.sus .ix{font:500 12px var(--mono);color:var(--dim);padding-top:2px}
+.sus .nm{font-weight:600;font-size:14.5px}
+.sus .pl{font-size:12.5px;color:var(--muted);margin-top:1px}
+.sus .vd{margin-left:auto;font:500 11px var(--mono);padding:2px 7px;border-radius:4px;white-space:nowrap;color:var(--dim);border:1px solid var(--line2)}
+.sus li.conf .vd{color:var(--red);border-color:rgba(240,100,111,.5)}
+.sus li.out .vd{color:var(--muted)}
+.sus li.out .nm{text-decoration:line-through;color:var(--muted)}
+.empty{color:var(--dim);font-size:14px;padding:34px 18px;text-align:center}
+.tally{padding:12px 16px;font:500 12.5px var(--mono);color:var(--muted)}
+
+.ibody{padding:16px 18px;animation:fade .25s ease}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}}
-.empty{color:var(--dim);font-size:14px;padding:40px 0;text-align:center}
-.note{color:var(--muted);font-size:14px;margin-bottom:12px;max-width:760px}
-.note b{color:var(--text);font-weight:600}
-pre{font:400 14px/1.75 var(--mono);color:var(--muted);white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto}
+.ins{min-height:360px}
+.lbl{font:500 11px var(--mono);letter-spacing:.08em;color:var(--dim);margin:14px 0 6px;text-transform:uppercase}
+.lbl:first-child{margin-top:0}
+.big{font-size:17px;font-weight:600}
+.txt{font-size:14.5px;color:var(--muted)}
+.txt b{color:var(--text);font-weight:600}
+.where{display:inline-block;font:500 12px var(--mono);color:var(--blue);border:1px solid rgba(110,168,254,.4);border-radius:5px;padding:2px 8px}
+.go{margin-top:14px;font:600 14px Inter,sans-serif;background:var(--blue);color:#0a1424;border:0;border-radius:7px;padding:9px 16px;cursor:pointer}
+.go:hover{filter:brightness(1.1)}
+pre{font:400 13.5px/1.7 var(--mono);color:var(--muted);white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:4px}
 pre .k{color:var(--blue)} pre .v{color:var(--text)} pre .r{color:var(--red)} pre .g{color:var(--green)} pre .c{color:var(--dim)} pre .a{color:var(--amber)}
-pre .m{background:rgba(240,100,111,.12);border-radius:3px;padding:0 3px;color:var(--text)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:820px){.two{grid-template-columns:1fr}.row{flex-direction:column}.conn{height:16px;width:auto}.conn:before{left:50%;top:0;bottom:0;border-top:0;border-left:1px solid var(--line2)}.conn:after,.dot{display:none}.probes{display:none}}
+pre .m{background:rgba(240,100,111,.13);border-radius:3px;padding:0 3px;color:var(--text)}
+pre .o{background:rgba(78,201,138,.12);border-radius:3px;padding:0 3px;color:var(--text)}
+.verdict{margin-top:12px;padding:11px 14px;border-radius:8px;font-size:14.5px;animation:fade .3s ease}
+.verdict.conf{background:rgba(240,100,111,.1);border:1px solid rgba(240,100,111,.45)}
+.verdict.out{background:var(--panel2);border:1px solid var(--line2);color:var(--muted)}
+.verdict b{font:600 12px var(--mono);margin-right:8px}
+.verdict.conf b{color:var(--red)} .verdict.out b{color:var(--text)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
 
-/* chat */
-.chat{display:flex;flex-direction:column;gap:8px;max-width:620px}
+.chat{display:flex;flex-direction:column;gap:8px;max-width:640px}
 .msg{padding:9px 13px;border-radius:10px;font-size:14.5px;max-width:78%;opacity:0;transform:translateY(6px);transition:all .3s}
 .msg.on{opacity:1;transform:none}
 .msg.bot{background:var(--panel2);border:1px solid var(--line2);align-self:flex-start}
 .msg.lead{background:#22324d;align-self:flex-end}
 .msg.x{border-color:rgba(240,100,111,.55)}
 .msg small{display:block;font:500 11px var(--mono);color:var(--red);margin-top:3px}
-.msg.okm small{color:var(--green)}
+.msg.okm{border-color:rgba(78,201,138,.5)} .msg.okm small{color:var(--green)}
 
-/* tests */
-.tests{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start}
-@media(max-width:820px){.tests{grid-template-columns:1fr}}
-.grid{display:grid;grid-template-columns:repeat(20,16px);gap:4px}
-.sq{width:16px;height:16px;border-radius:3px;background:var(--line)}
+.grid{display:grid;grid-template-columns:repeat(20,15px);gap:4px}
+.sq{width:15px;height:15px;border-radius:3px;background:var(--line)}
 .sq.p{background:var(--green)}.sq.f{background:var(--red)}
-.score{font:500 14px var(--mono);margin-top:12px;color:var(--muted)}
-.score b{font-size:22px;font-weight:700}
-.crit div{font:400 13.5px var(--mono);color:var(--muted);padding:7px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.tests{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start}
+@media(max-width:860px){.tests{grid-template-columns:1fr}}
+.score{font:500 14px var(--mono);margin-top:10px;color:var(--muted)}
+.score b{font-size:21px}
+.crit div{font:400 13px var(--mono);color:var(--muted);padding:6px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
 .crit .r{color:var(--red)}.crit .g{color:var(--green)}
-.ship{display:flex;gap:6px;align-items:center;margin-top:16px;flex-wrap:wrap;font:500 12.5px var(--mono);color:var(--dim)}
-.ship span{padding:6px 10px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
+.ship{display:flex;gap:6px;align-items:center;margin-top:14px;flex-wrap:wrap;font:500 12px var(--mono);color:var(--dim)}
+.ship span{padding:5px 9px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
 .ship span.on{border-color:rgba(78,201,138,.5);color:var(--green)}
 .ship span.no{border-color:rgba(240,100,111,.5);color:var(--red)}
-footer{margin-top:14px;font-size:12.5px;color:var(--dim)}
+footer{margin-top:12px;font-size:12px;color:var(--dim)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div><h1>AI setter: debugging one bad change</h1><p>Click a box or a log to inspect it.</p></div>
-    <div class="status" id="status">v1 · healthy</div>
+    <h1>AI setter: one new question, two new bugs</h1>
+    <div class="status" id="status"></div>
   </header>
 
   <div class="tools">
@@ -125,34 +136,27 @@ footer{margin-top:14px;font-size:12.5px;color:var(--dim)}
   </div>
 
   <div class="diagram" id="diagram">
-    <svg class="loopback" viewBox="0 0 1000 60" preserveAspectRatio="none"><path d="M 770 46 C 770 16, 250 16, 250 46" fill="none" stroke="#323946" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/></svg>
-    <div class="loopback"><span>answers written back to memory</span></div>
+    <svg class="loopback" viewBox="0 0 1000 54" preserveAspectRatio="none"><path d="M 770 42 C 770 14, 250 14, 250 42" fill="none" stroke="#323946" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/></svg>
+    <span class="looplbl">answers written back to memory</span>
     <div class="row">
-      <div class="node" data-n="lead"><span class="flag"></span><div class="no">01</div><h3>Lead message</h3><p>SMS / DM in</p></div>
-      <div class="conn"><span class="dot"></span></div>
-      <div class="node" data-n="mem"><span class="flag"></span><div class="no">02</div><h3>Load memory</h3><p>answers, current_step</p></div>
-      <div class="conn"><span class="dot"></span></div>
-      <div class="node" data-n="prompt"><span class="flag"></span><div class="no">03</div><h3>Build prompt</h3><p>rules + history + known</p><div class="tagnew">+ new question</div></div>
-      <div class="conn"><span class="dot"></span></div>
-      <div class="node" data-n="llm"><span class="flag"></span><div class="no">04</div><h3>LLM call</h3><p>reply + extracted fields</p></div>
-      <div class="conn"><span class="dot"></span></div>
-      <div class="node" data-n="save"><span class="flag"></span><div class="no">05</div><h3>Parse + save</h3><p>JSON → DB</p></div>
-      <div class="conn"><span class="dot"></span></div>
-      <div class="node" data-n="send"><span class="flag"></span><div class="no">06</div><h3>Send reply</h3><p>message out</p></div>
-    </div>
-    <div class="probes">
-      <div class="slot"></div><div class="gap"></div>
-      <div class="slot"><button class="probe" data-p="db">log: db row <i>3</i></button></div><div class="gap"></div>
-      <div class="slot"><button class="probe" data-p="in">log: payload in <i>1</i></button></div><div class="gap"></div>
-      <div class="slot"><button class="probe" data-p="out">log: llm output <i>2</i></button></div><div class="gap"></div>
-      <div class="slot"></div><div class="gap"></div>
-      <div class="slot"><button class="probe" data-p="chat">conversation</button></div>
+      <div class="node" data-n="lead"><div class="no">01</div><h3>Lead message</h3><p>SMS / DM in</p></div><div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="mem"><div class="no">02</div><h3>Load memory</h3><p>answers, step</p></div><div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="prompt"><div class="no">03</div><h3>Build prompt</h3><p>rules + history + known</p><div class="tagnew">+ new question</div></div><div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="llm"><div class="no">04</div><h3>LLM call</h3><p>reply + fields</p></div><div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="save"><div class="no">05</div><h3>Parse + save</h3><p>JSON → DB</p></div><div class="conn"><span class="dot"></span></div>
+      <div class="node" data-n="send"><div class="no">06</div><h3>Send reply</h3><p>message out</p></div>
     </div>
   </div>
 
-  <div class="inspector">
-    <div class="ihead"><span id="ititle">inspector</span><span id="imeta"></span></div>
-    <div class="ibody" id="ibody"></div>
+  <div class="bottom">
+    <div class="col">
+      <div class="chead"><b>possible causes</b><span id="tallyTop"></span></div>
+      <div id="suspects"><div class="empty">Add the new question to see what breaks.</div></div>
+    </div>
+    <div class="col ins">
+      <div class="chead"><span id="ititle"><b>details</b></span><button class="mini" id="bConvo" style="display:none">conversation</button></div>
+      <div class="ibody" id="ibody"></div>
+    </div>
   </div>
   <footer>Example lead and business are made up.</footer>
 </div>
@@ -160,109 +164,159 @@ footer{margin-top:14px;font-size:12.5px;color:var(--dim)}
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-let state='healthy'; // healthy | broken | fixed
-let sel=null, seen=new Set(), tested={}, runId=0;
+let state='healthy',sel=null,selNode=null,checked={},tested={},runId=0;
 
 const NODES={
- lead:{t:'01 · lead message',d:{all:`<p class="note">The lead's text arrives by webhook. Nothing to change here.</p><pre><span class="k">from:</span> <span class="v">sarah</span>\n<span class="k">text:</span> <span class="v">"Staying consistent. Budget's about $200/mo btw"</span></pre>`}},
- mem:{t:'02 · load memory',d:{
-  healthy:`<p class="note">Reads what we already know about this lead from the DB.</p><pre><span class="k">current_step:</span> <span class="v">2</span>   <span class="c">// index in the question list</span>\n<span class="k">answers:</span> <span class="v">{ q1: "$200/mo" }</span></pre>`,
-  broken:`<p class="note"><b>Broken.</b> Progress is stored as a <b>position</b>. The new question was inserted at position 0, so every saved step now points one question too early.</p><pre><span class="k">current_step:</span> <span class="m">2</span>   <span class="r">// used to mean Timeline, now means Budget</span>\n<span class="k">answers:</span> <span class="m">{ }</span>   <span class="r">// nothing saved this turn</span></pre>`,
-  fixed:`<p class="note"><b>Fixed.</b> Answers are keyed by name. Code works out what's left. Adding a question never shifts anything.</p><pre><span class="k">answers:</span> <span class="v">{ challenge: "consistency", budget: "$200/mo" }</span>\n<span class="k">needed:</span>  <span class="g">[ "timeline", "decision_maker" ]</span>   <span class="c">// computed in code</span></pre>`}},
- prompt:{t:'03 · build prompt',d:{
-  healthy:`<p class="note">Assembles rules, chat history and known answers into one request.</p><pre><span class="c">rules:</span>   always intro · never re-ask · then book\n<span class="c">history:</span> full conversation\n<span class="c">known:</span>   from memory</pre>`,
-  broken:`<p class="note"><b>Broken.</b> The new question was pasted in as <b>"FIRST: ask…"</b>. The model follows the most direct instruction, so "intro first" and "never re-ask" lose. The longer prompt also pushed old messages past the token limit.</p><pre><span class="m">FIRST: ask "What's your biggest challenge?"</span>\n<span class="c">1. Always start with the intro.          ← overridden</span>\n<span class="c">2. Never re-ask what's already known.    ← overridden</span></pre>`,
-  fixed:`<p class="note"><b>Fixed.</b> The prompt no longer controls the order. Code passes exactly what's known and what's next. The intro is a coded step.</p><pre><span class="g">if not lead.intro_sent: send(INTRO); lead.intro_sent = True</span>\n\n<span class="k">KNOWN:</span>        <span class="v">challenge=consistency, budget=$200/mo</span>\n<span class="k">STILL NEEDED:</span> <span class="v">timeline</span>\n<span class="c">Never ask about anything under KNOWN.</span></pre>`}},
- llm:{t:'04 · llm call',d:{all:`<p class="note">The model only knows what step 03 gives it. If the input is wrong, the output is wrong. Open <b>log: llm output</b> to see what came back.</p>`}},
- save:{t:'05 · parse + save',d:{
-  healthy:`<p class="note">Takes the fields from the LLM's JSON and writes them to memory.</p><pre><span class="k">schema:</span> <span class="v">{ budget, timeline, decision_maker }</span></pre>`,
-  broken:`<p class="note"><b>Broken.</b> The schema changed with the new question, the keys don't match, and the error is swallowed. Nothing is saved and nobody is alerted.</p><pre><span class="v">try:</span> parse(json)\n<span class="m">except: pass</span>   <span class="r">// silent → saved { }</span></pre>`,
-  fixed:`<p class="note"><b>Fixed.</b> Output is validated against the schema. A failure retries once, then alerts.</p><pre><span class="g">validate(json, SCHEMA)</span>  → on fail: retry → alert #setter-errors</pre>`}},
- send:{t:'06 · send reply',d:{all:`<p class="note">Sends the message. Open <b>conversation</b> to see what the lead got.</p>`}}
-};
-const LOGS={
- in:{t:'log 1 · payload sent into the llm',m:'lead: sarah · turn 4',d:{
-  healthy:`<pre><span class="k">system:</span>  <span class="v">"Always start with intro… Never re-ask…"</span>\n<span class="k">history:</span> <span class="v">[ 6 messages ]</span>\n<span class="k">known:</span>   <span class="v">{ budget: "$200/mo" }</span>\n<span class="k">step:</span>    <span class="v">2 → "Timeline"</span></pre>`,
-  broken:`<p class="note">First thing I check: the <b>exact</b> request the model received on a bad turn.</p><pre><span class="k">system:</span>  <span class="m">"FIRST: ask biggest challenge…"</span>   <span class="r">← new line on top of the rules</span>\n         <span class="v">"Always start with intro…"</span>\n<span class="k">history:</span> <span class="m">[ last 2 messages ]</span>                 <span class="r">← older turns cut off</span>\n<span class="k">known:</span>   <span class="m">{ budget: null }</span>                    <span class="r">← she said $200</span>\n<span class="k">step:</span>    <span class="m">2 → "Budget"</span>                       <span class="r">← should be Timeline</span></pre>`,
-  fixed:`<pre><span class="k">system:</span>  <span class="v">rules (order handled in code)</span>\n<span class="k">history:</span> <span class="v">[ full conversation ]</span>        <span class="g">← reserved in token budget</span>\n<span class="k">KNOWN:</span>   <span class="v">challenge, budget</span>\n<span class="k">NEEDED:</span>  <span class="v">timeline</span></pre>`}},
- out:{t:'log 2 · what the llm sent back',m:'raw response → parser',d:{
-  healthy:`<pre><span class="k">raw:</span>    <span class="v">{ "budget": "$200/mo" }</span>\n<span class="k">saved:</span>  <span class="g">{ budget: "$200/mo" } ✓</span></pre>`,
-  broken:`<p class="note">Then: what came back, and did it actually get saved?</p><pre><span class="k">raw:</span>     <span class="v">{ "challenge": "consistency", <span class="m">"Budget"</span>: "$200/mo" }</span>\n<span class="k">parser:</span>  expects "budget" → <span class="r">KeyError</span>\n<span class="k">code:</span>    <span class="m">except: pass</span>                          <span class="r">← swallowed</span>\n<span class="k">saved:</span>   <span class="r">{ }</span></pre>`,
-  fixed:`<pre><span class="k">raw:</span>    <span class="v">{ "challenge": "consistency", "budget": "$200/mo" }</span>\n<span class="k">schema:</span> <span class="g">valid ✓</span>\n<span class="k">saved:</span>  <span class="g">{ challenge, budget } ✓</span></pre>`}},
- db:{t:'log 3 · db row for this lead',m:'what memory really holds',d:{
-  healthy:`<pre><span class="k">current_step:</span> <span class="v">2</span>  → Timeline\n<span class="k">answers:</span>      <span class="v">{ q1: "$200/mo" }</span>\n<span class="k">intro_sent:</span>   <span class="v">true</span></pre>`,
-  broken:`<p class="note">Last: the DB row. This explains <b>both</b> symptoms.</p><div class="two"><pre><span class="k">current_step:</span> <span class="m">2</span>\n<span class="k">answers:</span>      <span class="r">{ }</span>\n<span class="k">intro_sent:</span>   <span class="r">false</span></pre><pre><span class="c">question list  before → after</span>\n<span class="k">0</span>  Intro      → <span class="a">Challenge (new)</span>\n<span class="k">1</span>  Budget     → Intro\n<span class="k">2</span>  <span class="g">Timeline</span>   → <span class="r">Budget</span>   <span class="r">← re-ask</span>\n<span class="c">new leads start at 0 → no intro</span></pre></div>`,
-  fixed:`<pre><span class="k">answers:</span>    <span class="v">{ challenge: "consistency", budget: "$200/mo" }</span>\n<span class="k">intro_sent:</span> <span class="g">true</span>\n<span class="k">needed:</span>     <span class="g">[ timeline, decision_maker ]</span></pre>`}},
- chat:{t:'conversation',m:'what the lead sees',d:{}}
-};
-const CHATS={
- healthy:[['bot','Hey Sarah, Alex from Northside Fitness here. Thanks for reaching out! Two quick questions?'],['lead','Sure'],['bot',"What's your monthly budget?"],['lead','About $200/mo'],['bot','Great. When would you like to start?']],
- broken:[['bot',"What's your biggest challenge right now?",'x','no intro'],['lead',"Staying consistent. Budget's about $200/mo btw"],['bot',"Got it! What's your monthly budget?",'x','re-asked'],['lead','…I just told you']],
- fixed:[['bot','Hey Sarah, Alex from Northside Fitness here. Thanks for reaching out! A few quick questions?','okm','intro (coded step)'],['lead','Sure'],['bot',"What's your biggest challenge right now?"],['lead',"Staying consistent. Budget's about $200/mo btw"],['bot','Makes sense, and $200/mo works. When would you like to start?','okm','used known answer']]
+ lead:['Lead message','The lead\'s text comes in by webhook.'],
+ mem:['Load memory','Reads what we already know about this lead: saved answers and which step they\'re on.'],
+ prompt:['Build prompt','Puts together the rules, the chat history and the known answers. This is what the LLM sees.'],
+ llm:['LLM call','Writes the reply and pulls answers out of the lead\'s message. It only knows what step 03 gives it.'],
+ save:['Parse + save','Reads the LLM\'s JSON and writes the answers back to memory.'],
+ send:['Send reply','Sends the message to the lead.']
 };
 
-function pick(d){return d[state]||d.all||d.healthy}
+const SUS=[
+ {id:'conflict',nm:'Prompt conflict',pl:'New rule fights the old ones',node:'prompt',
+  why:'I added <b>"FIRST: ask their biggest challenge"</b>. The prompt also says <b>"always start with the intro"</b>. Two "first" rules. The model picks one.',
+  check:'Log the exact system prompt sent on a bad turn.',
+  ev:`<span class="k">system:</span>
+  <span class="m">FIRST: ask "What's your biggest challenge?"</span>   <span class="r">← new, on top</span>
+  1. Always start with the intro.
+  2. Never re-ask what's already known.`,
+  v:'conf',vt:'Both rules are there. The newest, most direct one wins, so the intro gets skipped.',expl:'no intro'},
+ {id:'overload',nm:'Prompt overloaded',pl:'Too much in it, model loses track',node:'prompt',
+  why:'Every new question adds text. Too many rules or too much context can make the model miss things or push old messages out.',
+  check:'Log the token count and how many messages made it in.',
+  ev:`<span class="k">prompt_tokens:</span>  <span class="o">3,140</span>  <span class="c">/ 128,000 limit</span>
+<span class="k">messages_sent:</span>  <span class="o">8 of 8</span>`,
+  v:'out',vt:'Small prompt, nothing cut off. Not this one.'},
+ {id:'history',nm:'History not passed',pl:'Bot never sees earlier messages',node:'prompt',
+  why:'If the conversation isn\'t sent with the prompt, the bot can\'t know she already said "$200".',
+  check:'Log the messages array sent to the LLM.',
+  ev:`<span class="k">messages:</span>
+  ...
+  <span class="v">lead:</span> <span class="o">"Staying consistent. Budget's about $200/mo btw"</span>   <span class="g">← it's there</span>`,
+  v:'out',vt:'The answer is in the history. Not this one.'},
+ {id:'save',nm:'Answers not saved',pl:'Lead answers, DB never updates',node:'save',
+  why:'The lead answers but the parser fails, so memory stays empty and the bot asks again.',
+  check:'Log the DB row right after her reply.',
+  ev:`<span class="k">answers:</span>  <span class="o">{ challenge: "consistency", budget: "$200/mo" }</span>`,
+  v:'out',vt:'Saved fine. Not this one.'},
+ {id:'position',nm:'Steps saved by number',pl:'"Step 2" now means a different question',node:'mem',
+  why:'Memory says <b>"step 2"</b>, not <b>"budget done"</b>. I inserted the new question at the top, so every number moved down by one.',
+  check:'Log current_step and compare the question list before and after.',
+  ev:`<span class="k">current_step:</span> <span class="m">2</span>
+<span class="k">next_question:</span> <span class="m">"budget"</span>   <span class="r">← code picks by position</span>
+
+<span class="c">        before      after</span>
+<span class="k">0</span>       Intro    →  <span class="a">Challenge (new)</span>
+<span class="k">1</span>       Budget   →  Intro
+<span class="k">2</span>       Timeline →  <span class="r">Budget</span>`,
+  v:'conf',vt:'Saved answers are right, but the step points at Budget, so the bot re-asks it. The code also tells it "next: budget", which overrides the history.',expl:'re-ask'}
+];
+
+const FIX={
+ conflict:['Intro and question order move into code','prompt: "FIRST: ask…" / "Always intro"','if not lead.intro_sent:\n    send(INTRO)\nnext = first(q for q in QUESTIONS\n             if q.id not in answers)'],
+ position:['Track by name, not by number','current_step = 2','answers = { budget: "$200/mo" }\n# adding a question never shifts anything']
+};
+
+const CHATS={
+ broken:[['bot',"What's your biggest challenge right now?",'x','no intro'],['lead',"Staying consistent. Budget's about $200/mo btw"],['bot',"Got it! What's your monthly budget?",'x','asked again'],['lead','…I just told you']],
+ fixed:[['bot','Hey Sarah, Alex from Northside Fitness. Thanks for reaching out! A few quick questions?','okm','intro'],['lead','Sure'],['bot',"What's your biggest challenge right now?"],['lead',"Staying consistent. Budget's about $200/mo btw"],['bot','Makes sense, and $200/mo works. When would you like to start?','okm','skipped budget, already known']]
+};
+
+function body(html){const b=$('#ibody');b.style.animation='none';b.offsetWidth;b.style.animation='';b.innerHTML=html}
+function title(t){$('#ititle').innerHTML='<b>'+t+'</b>'}
+
 function render(){
   const D=$('#diagram');D.classList.toggle('isbad',state==='broken');D.classList.toggle('isok',state==='fixed');
   const st=$('#status');st.className='status'+(state==='broken'?' bad':state==='fixed'?' ok':'');
-  st.textContent=state==='healthy'?'v1 · healthy':state==='broken'?'v2 · new question · leads complaining':'v3 · fixed';
-  const bad=['mem','prompt','save'];
-  $$('.node').forEach(n=>{const k=n.dataset.n;n.className='node'+(sel===k?' sel':'')+(state==='broken'&&bad.includes(k)&&seen.size>=3?' bad':'')+(state==='fixed'&&bad.includes(k)?' ok':'')+(state!=='healthy'&&k==='prompt'?' changed':'')});
-  $$('.probe').forEach(p=>{const k=p.dataset.p;p.className='probe'+(sel===k?' sel':'')+(state==='broken'&&seen.has(k)&&k!=='chat'?' seen':'')});
-  $('#bAdd').disabled=state!=='healthy';$('#bAdd').classList.toggle('done',state!=='healthy');
-  $('#bFix').disabled=state!=='broken';$('#bFix').classList.toggle('done',state==='fixed');
-  suggest();
+  st.textContent={healthy:'v1 · working',broken:'v2 · leads complaining',fixed:'v3 · fixed'}[state];
+  const confNodes=SUS.filter(s=>checked[s.id]==='conf').map(s=>s.node);
+  const cur=SUS.find(s=>s.id===sel);
+  $$('.node').forEach(n=>{const k=n.dataset.n;n.className='node'+((cur&&cur.node===k)||selNode===k?' sel':'')+(state==='broken'&&confNodes.includes(k)?' bad':'')+(state==='fixed'&&['mem','prompt'].includes(k)?' ok':'')+(state!=='healthy'&&k==='prompt'?' changed':'')});
+  $('#bAdd').disabled=state!=='healthy';$('#bFix').disabled=state!=='broken';
+  $('#bConvo').style.display=state==='healthy'?'none':'';
+  drawSus();suggest();
+}
+function drawSus(){
+  const box=$('#suspects');
+  if(state==='healthy'){box.innerHTML='<div class="empty">Add the new question to see what breaks.</div>';$('#tallyTop').textContent='';return}
+  if(state==='fixed'){box.innerHTML=SUS.filter(s=>checked[s.id]==='conf').map(s=>`<ul class="sus"><li class="conf" style="animation:none;opacity:1;transform:none"><span class="ix">✓</span><div><div class="nm">${s.nm}</div><div class="pl" style="color:var(--green)">${FIX[s.id][0]}</div></div></li></ul>`).join('')||'<div class="empty">Fixed.</div>';$('#tallyTop').textContent='fixed';return}
+  const n=Object.keys(checked).length;
+  $('#tallyTop').textContent=n?`${n}/5 checked`:'';
+  if(!box.querySelector('.sus')){box.innerHTML='<ul class="sus">'+SUS.map((s,i)=>`<li data-s="${s.id}" style="animation-delay:${i*90}ms"><span class="ix">${i+1}</span><div><div class="nm">${s.nm}</div><div class="pl">${s.pl}</div></div><span class="vd">?</span></li>`).join('')+'</ul>';
+    box.querySelectorAll('li').forEach(li=>li.onclick=()=>openSus(li.dataset.s))}
+  box.querySelectorAll('li').forEach(li=>{const id=li.dataset.s,c=checked[id];li.classList.toggle('sel',sel===id);li.classList.toggle('conf',c==='conf');li.classList.toggle('out',c==='out');li.querySelector('.vd').textContent=c==='conf'?'found':c==='out'?'ruled out':'?'});
 }
 function suggest(){
   $$('.sug').forEach(e=>e.classList.remove('sug'));
-  let t=null;
-  if(state==='healthy')t=$('#bAdd');
-  else if(state==='broken'){const order=['in','out','db'];const nx=order.find(k=>!seen.has(k));
-    if(nx)t=$(`.probe[data-p="${nx}"]`);else if(!tested.broken)t=$('#bTest');else t=$('#bFix')}
-  else if(state==='fixed'&&!tested.fixed)t=$('#bTest');
-  if(t&&!(t.classList.contains('sel')))t.classList.add('sug');
+  if(state==='healthy')$('#bAdd').classList.add('sug');
+  else if(state==='broken'&&checked.conflict==='conf'&&checked.position==='conf'){ if(!tested.broken)$('#bTest').classList.add('sug');else $('#bFix').classList.add('sug')}
+  else if(state==='fixed'&&!tested.fixed)$('#bTest').classList.add('sug');
 }
-function open(kind,key){
-  sel=key;runId++;
-  const src=kind==='node'?NODES[key]:LOGS[key];
-  $('#ititle').innerHTML='<b>'+src.t+'</b>';$('#imeta').textContent=src.m||'';
-  const b=$('#ibody');b.style.animation='none';b.offsetWidth;b.style.animation='';
-  if(key==='chat'){showChat();}
-  else b.innerHTML=pick(src.d);
-  if(kind==='log'&&state==='broken')seen.add(key);
-  if(kind==='log'&&state==='broken'&&seen.has('in')&&seen.has('out')&&seen.has('db')&&key==='db'){
-    b.innerHTML+=`<p class="note" style="margin-top:14px"><b>Found it.</b> Two causes: memory tracked by position (02), and order rules living only in the prompt (03). Made worse by the silent parser (05). They're now marked red in the diagram.</p>`}
+function openNode(k){
+  sel=null;selNode=k;runId++;title('03'.slice(0,0)+NODES[k][0]);
+  const rel=state==='broken'?SUS.filter(s=>s.node===k):[];
+  body(`<div class="txt">${NODES[k][1]}</div>`+(rel.length?`<div class="lbl">possible causes here</div><div class="txt">${rel.map(s=>`<a href="#" data-s="${s.id}" style="color:var(--blue)">${s.nm}</a>`).join(' · ')}</div>`:''));
+  $$('#ibody a[data-s]').forEach(a=>a.onclick=e=>{e.preventDefault();openSus(a.dataset.s)});
   render();
 }
+function openSus(id){
+  sel=id;selNode=null;runId++;const s=SUS.find(x=>x.id===id),c=checked[id];
+  title(s.nm);
+  body(`<div class="lbl">why it could be this</div><div class="txt">${s.why}</div>
+   <div class="lbl">where</div><span class="where">${s.node==='mem'?'02 · load memory':s.node==='save'?'05 · parse + save':'03 · build prompt'}</span>
+   <div class="lbl">how I check</div><div class="txt">${s.check}</div>
+   <div id="evid">${c?evidence(s):'<button class="go" id="goCheck">Check it</button>'}</div>`);
+  const g=$('#goCheck');if(g)g.onclick=()=>runCheck(s);
+  render();
+}
+function evidence(s){
+  return `<div class="lbl">log</div><pre>${s.ev}</pre><div class="verdict ${s.v}"><b>${s.v==='conf'?'FOUND':'RULED OUT'}</b>${s.vt}${s.expl?` <span style="color:var(--red)">→ explains: ${s.expl}</span>`:''}</div>`;
+}
+async function runCheck(s){
+  const id=runId,e=$('#evid');e.innerHTML='<div class="lbl">log</div><pre class="c">fetching log for lead sarah, turn 4…</pre>';
+  await wait(650);if(id!==runId)return;
+  e.innerHTML=`<div class="lbl">log</div><pre>${s.ev}</pre>`;
+  await wait(700);if(id!==runId)return;
+  checked[s.id]=s.v;e.innerHTML=evidence(s);render();
+  if(checked.conflict==='conf'&&checked.position==='conf'&&Object.keys(checked).length>=2){
+    e.insertAdjacentHTML('beforeend',`<div class="verdict conf" style="background:transparent">Both symptoms now explained: <b style="color:var(--text)">prompt conflict</b> → no intro, <b style="color:var(--text)">steps by number</b> → re-ask.</div>`)}
+}
 async function showChat(){
-  const id=runId,b=$('#ibody');
-  b.innerHTML='<div class="chat">'+CHATS[state].map(m=>`<div class="msg ${m[0]} ${m[2]||''}">${m[1]}${m[3]?'<small>'+m[3]+'</small>':''}</div>`).join('')+'</div>';
-  for(const m of b.querySelectorAll('.msg')){await wait(380);if(id!==runId)return;m.classList.add('on')}
+  sel=null;selNode=null;const id=++runId;title('conversation · what the lead sees');render();
+  body('<div class="chat">'+CHATS[state].map(m=>`<div class="msg ${m[0]} ${m[2]||''}">${m[1]}${m[3]?'<small>'+m[3]+'</small>':''}</div>`).join('')+'</div>');
+  for(const m of $$('#ibody .msg')){await wait(380);if(id!==runId)return;m.classList.add('on')}
+}
+function showFix(){
+  const fixes=['conflict','position'];
+  return fixes.map(k=>`<div class="lbl">${FIX[k][0]}</div><div class="two"><pre><span class="c">before</span>\n<span class="r">${FIX[k][1]}</span></pre><pre><span class="c">after</span>\n<span class="g">${FIX[k][2]}</span></pre></div>`).join('');
 }
 async function runTests(){
-  sel=null;const id=++runId,v=state;render();
+  sel=null;selNode=null;const id=++runId,v=state;render();
   const rate={healthy:100,broken:38,fixed:100}[v];
-  $('#ititle').innerHTML='<b>replay test · 100 real past conversations through this version</b>';$('#imeta').textContent=v==='healthy'?'v1':v==='broken'?'v2':'v3';
-  const crit=v==='broken'?[['intro on turn 1','0/100','r'],['never asks a known answer','41/100','r'],['every answer saved','38/100','r'],['booking link sent','71/100','r']]:[['intro on turn 1','100/100','g'],['never asks a known answer','100/100','g'],['every answer saved','100/100','g'],['booking link sent','100/100','g']];
-  $('#ibody').innerHTML=`<div class="tests"><div><div class="grid" id="grid">${'<div class="sq"></div>'.repeat(100)}</div><div class="score" id="score">running…</div></div>
-   <div><div class="crit">${crit.map(c=>`<div><span>${c[0]}</span><span class="cr ${c[2]}" style="opacity:0">${c[1]}</span></div>`).join('')}</div><div class="ship" id="ship" style="opacity:0"></div></div></div>`;
+  title('replay · 100 real past conversations through this version');
+  const crit=v==='broken'?[['intro on turn 1','0/100','r'],['never asks a known answer','41/100','r'],['booking link sent','71/100','r']]:[['intro on turn 1','100/100','g'],['never asks a known answer','100/100','g'],['booking link sent','100/100','g']];
+  body(`<div class="tests"><div><div class="grid">${'<div class="sq"></div>'.repeat(100)}</div><div class="score" id="score">running…</div></div>
+   <div><div class="crit">${crit.map(c=>`<div><span>${c[0]}</span><span class="cr ${c[2]}" style="opacity:0">${c[1]}</span></div>`).join('')}</div><div class="ship" id="ship" style="opacity:0"></div></div></div>`);
   const fail=new Set();if(rate<100){let s=7;while(fail.size<100-rate){s=(s*37+11)%100;fail.add(s)}}
   const sq=$$('.sq');
   for(let i=0;i<100;i++){if(id!==runId)return;sq[i].classList.add(fail.has(i)?'f':'p');if(i%5===4)await wait(22)}
   $$('.cr').forEach(c=>c.style.opacity=1);
   $('#score').innerHTML=rate===100?`<b style="color:var(--green)">100/100</b> passed`:`<b style="color:var(--red)">${rate}/100</b> passed · deploy blocked`;
   const sh=$('#ship');sh.innerHTML=rate===100
-    ?'<span class="on">replay 100/100</span>→<span class="on">shadow (drafts only)</span>→<span class="on">10% canary · 24h</span>→<span class="on">monitor + auto-rollback</span>'
-    :'<span class="no">replay '+rate+'/100</span>→<span>shadow</span>→<span>canary</span>→<span>live</span><span style="border:0;color:var(--red)">stopped here, no client saw it</span>';
+    ?'<span class="on">replay 100/100</span>→<span class="on">shadow</span>→<span class="on">10% canary</span>→<span class="on">monitor + auto-rollback</span>'
+    :'<span class="no">replay '+rate+'/100</span>→<span>shadow</span>→<span>canary</span>→<span>live</span>';
   sh.style.opacity=1;tested[v]=true;suggest();
 }
 
-$$('.node').forEach(n=>n.onclick=()=>open('node',n.dataset.n));
-$$('.probe').forEach(p=>p.onclick=()=>open('log',p.dataset.p));
-$('#bAdd').onclick=()=>{state='broken';seen.clear();open('log','chat')};
-$('#bFix').onclick=()=>{state='fixed';open('log','chat')};
+$$('.node').forEach(n=>n.onclick=()=>openNode(n.dataset.n));
+$('#bConvo').onclick=showChat;
+$('#bAdd').onclick=()=>{state='broken';checked={};tested={};showChat()};
+$('#bFix').onclick=async()=>{state='fixed';sel=null;selNode=null;runId++;title('the fix');render();body(showFix())};
 $('#bTest').onclick=runTests;
-$('#bReset').onclick=()=>{state='healthy';seen.clear();tested={};sel=null;runId++;$('#ititle').innerHTML='inspector';$('#imeta').textContent='';$('#ibody').innerHTML='<div class="empty">Click any box or log above.</div>';render()};
+$('#bReset').onclick=()=>{state='healthy';checked={};tested={};sel=null;selNode=null;runId++;title('details');body('<div class="empty">Click any box in the diagram to see what it does.</div>');$('#suspects').innerHTML='';render()};
 $('#bReset').onclick();
 </script>
 </body>
