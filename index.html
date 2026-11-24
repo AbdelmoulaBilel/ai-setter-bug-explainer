@@ -6,269 +6,189 @@
 <title>Why the Setter Forgot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0d12;--card:#171b25;--bg2:#11141b;--line:#2a3140;--text:#eef1f6;--muted:#9aa3b5;--dim:#5f6779;
---blue:#5b9dff;--green:#3fd68a;--red:#ff5d6c;--amber:#ffb547;--violet:#a78bfa;
+:root{--bg:#0b0d12;--card:#171b25;--line:#2a3140;--text:#eef1f6;--muted:#9aa3b5;--dim:#5f6779;
+--blue:#5b9dff;--green:#3fd68a;--red:#ff5d6c;--amber:#ffb547;
 --blue-bg:rgba(91,157,255,.13);--green-bg:rgba(63,214,138,.13);--red-bg:rgba(255,93,108,.14);--amber-bg:rgba(255,181,71,.14);--mono:'JetBrains Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
-#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center}
-.slide{position:absolute;inset:0;padding:64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:translateX(40px)}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px}
+.slide{position:absolute;inset:0;padding:70px 90px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:scale(.96)}
 .slide.on{opacity:1;pointer-events:auto;transform:none}
-.slide.past{transform:translateX(-40px)}
-.tag{font:700 15px var(--mono);letter-spacing:.14em;color:var(--blue);margin-bottom:14px}
-h1{font-size:72px;line-height:1.05;font-weight:800;letter-spacing:-.03em}
-h2{font-size:50px;line-height:1.1;font-weight:800;letter-spacing:-.02em;margin-bottom:34px}
+.tag{font:700 16px var(--mono);letter-spacing:.16em;color:var(--dim);margin-bottom:16px}
+h1{font-size:76px;line-height:1.05;font-weight:800;letter-spacing:-.03em}
+h2{font-size:56px;font-weight:800;letter-spacing:-.02em;margin-bottom:50px}
 .r{color:var(--red)}.g{color:var(--green)}.b{color:var(--blue)}.a{color:var(--amber)}
-.f{opacity:0;transform:translateY(24px);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1.2)}
+.f{opacity:0;transform:translateY(30px) scale(.9);transition:all .5s cubic-bezier(.2,.8,.2,1.3)}
 .f.show{opacity:1;transform:none}
-.row{display:flex;gap:24px}
-.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:26px 28px;flex:1;transition:all .4s}
-.card h3{font-size:28px;font-weight:700}
-.card p{font-size:21px;color:var(--muted);margin-top:8px;line-height:1.4}
-.card.red{border-color:var(--red);background:var(--red-bg)}
-.card.green{border-color:var(--green);background:var(--green-bg)}
-.num{font:800 22px var(--mono);color:var(--blue)}
-.pill{display:inline-block;font:700 15px var(--mono);padding:6px 12px;border-radius:999px;vertical-align:middle}
-.pill.r{background:var(--red-bg)}.pill.g{background:var(--green-bg)}.pill.a{background:var(--amber-bg)}
-.big{font-size:30px;line-height:1.4;color:var(--muted)}
-.big b{color:var(--text)}
-
-/* loop */
-.loop{display:flex;align-items:center;gap:0;margin-top:20px}
-.node{flex:1;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:26px 16px;text-align:center;transition:all .5s;position:relative}
-.node .ic{font-size:48px}.node h3{font-size:24px;margin-top:8px}.node p{font-size:17px;color:var(--muted);margin-top:4px}
-.node.hot{border-color:var(--red);background:var(--red-bg);transform:translateY(-8px)}
-.arr{width:54px;height:4px;background:var(--line);position:relative;flex-shrink:0}
-.arr:after{content:"";position:absolute;top:-5px;left:0;width:14px;height:14px;border-radius:50%;background:var(--blue);box-shadow:0 0 14px var(--blue);animation:run 1.4s linear infinite}
-@keyframes run{0%{left:0;opacity:0}25%{opacity:1}75%{opacity:1}100%{left:40px;opacity:0}}
-
-/* checks */
-.chk{display:flex;align-items:center;gap:22px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px 24px;margin-bottom:12px}
-.chk .num{font-size:26px;min-width:40px;height:52px;display:grid;place-items:center;background:var(--bg2);border-radius:12px;padding:0 10px}
-.chk h3{font-size:27px;flex:1}
-.chk.stop{border-color:var(--red);background:var(--red-bg)}.chk.stop .num{color:var(--red)}
+.row{display:flex;gap:30px;justify-content:center}
+.tile{width:300px;background:var(--card);border:3px solid var(--line);border-radius:26px;padding:34px 20px;transition:all .4s}
+.tile .ic{font-size:72px;line-height:1}
+.tile h3{font-size:30px;font-weight:800;margin-top:18px}
+.tile.red{border-color:var(--red);background:var(--red-bg)}
+.tile.green{border-color:var(--green);background:var(--green-bg)}
+.tile.blue{border-color:var(--blue);background:var(--blue-bg)}
 
 /* list shift */
-.shift{display:flex;gap:40px;flex:1}
-.qlist{position:relative;width:520px}
-.q{position:absolute;left:0;right:0;height:62px;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--card);border:2px solid var(--line);border-radius:14px;font-size:23px;font-weight:600;transition:transform .9s cubic-bezier(.6,0,.2,1),opacity .6s,border-color .4s,background .4s}
-.q .ix{font:700 17px var(--mono);color:var(--blue);background:var(--blue-bg);border-radius:8px;padding:6px 10px;min-width:92px;text-align:center}
+.shift{display:flex;gap:60px;align-items:center}
+.qlist{position:relative;width:440px;height:390px;text-align:left}
+.q{position:absolute;left:0;right:0;height:66px;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--card);border:3px solid var(--line);border-radius:16px;font-size:26px;font-weight:800;transition:transform .9s cubic-bezier(.6,0,.2,1),opacity .6s,border-color .4s}
+.q .ix{font:700 22px var(--mono);color:var(--blue);background:var(--blue-bg);border-radius:10px;width:48px;text-align:center;padding:4px 0}
 .q.new{border-color:var(--amber);background:var(--amber-bg)}.q.new .ix{color:var(--amber)}
-.q.hit{border-color:var(--red);box-shadow:0 0 0 5px var(--red-bg)}
-.ptrs{flex:1;display:flex;flex-direction:column;gap:20px}
-.ptr{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px 26px;transition:all .5s}
-.ptr .who{font-size:25px;font-weight:700}
-.ptr .sv{font:600 18px var(--mono);color:var(--muted);margin-top:6px}
-.ptr .res{font-size:23px;margin-top:12px}
+.q.hit{border-color:var(--red);box-shadow:0 0 0 6px var(--red-bg)}
+.ptrs{display:flex;flex-direction:column;gap:26px;text-align:left}
+.ptr{font-size:32px;font-weight:800;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:24px 30px;min-width:440px;transition:all .5s}
+.ptr .sv{font:700 20px var(--mono);color:var(--muted);margin-top:6px}
 .ptr.bad{border-color:var(--red);background:var(--red-bg)}
-.note{margin-top:22px;font-size:22px;color:var(--muted)}
 
 /* prompt */
-.pl{font:600 21px var(--mono);padding:13px 22px;border-radius:14px;background:var(--card);border:2px solid var(--line);margin-bottom:12px;position:relative;transition:all .5s}
-.pl.new{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);max-height:0;padding:0 22px;opacity:0;border-width:0;margin:0;overflow:hidden}
-.pl.new.show{max-height:140px;padding:13px 22px;opacity:1;border-width:2px;margin-bottom:12px;animation:slam .6s cubic-bezier(.2,.9,.3,1.5)}
-@keyframes slam{0%{transform:translateY(-40px) scale(1.08)}}
-.pl.lose{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--red);border-color:rgba(255,93,108,.45)}
-.pl.lose:after{content:"IGNORED";position:absolute;right:18px;top:50%;transform:translateY(-50%);font:700 14px var(--mono);color:var(--red);background:var(--red-bg);padding:4px 10px;border-radius:6px}
-.cut{display:flex;gap:10px;margin-top:14px}
-.msg{font:600 16px var(--mono);padding:10px 14px;border-radius:12px;background:var(--card);border:2px solid var(--line);transition:all .7s;white-space:nowrap}
-.msg.gone{opacity:.25;transform:translateY(30px) rotate(-4deg);border-color:var(--red);text-decoration:line-through}
-
-/* fix */
-.fx{display:flex;flex-direction:column;gap:18px}
-.fxrow{display:grid;grid-template-columns:330px 1fr 1fr;gap:18px;align-items:stretch}
-.fxrow h3{font-size:26px;align-self:center}
-.code{font:600 19px/1.5 var(--mono);border-radius:14px;padding:16px 20px;white-space:pre}
-.code.bad{background:var(--red-bg);color:#ffb3ba;border:2px solid rgba(255,93,108,.4)}
-.code.good{background:var(--green-bg);color:#b5f5d3;border:2px solid rgba(63,214,138,.4)}
+.pls{width:900px;text-align:left}
+.pl{font:700 30px var(--mono);padding:20px 28px;border-radius:18px;background:var(--card);border:3px solid var(--line);margin-bottom:16px;position:relative;transition:all .5s}
+.pl.new{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);max-height:0;padding:0 28px;opacity:0;border-width:0;margin:0;overflow:hidden}
+.pl.new.show{max-height:160px;padding:20px 28px;opacity:1;border-width:3px;margin-bottom:16px;animation:slam .6s cubic-bezier(.2,.9,.3,1.5)}
+@keyframes slam{0%{transform:translateY(-50px) scale(1.1)}}
+.pl.lose{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--red);border-color:var(--red)}
+.pl.lose:after{content:"❌";position:absolute;right:24px;top:50%;transform:translateY(-50%);text-decoration:none}
 
 /* gates */
-.gates{display:flex;gap:14px;margin-top:10px}
-.gate{flex:1;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px 12px;text-align:center;transition:all .4s}
-.gate .ic{font-size:40px}.gate h3{font-size:21px;margin-top:8px}.gate p{font-size:16px;color:var(--muted);margin-top:4px;line-height:1.35}
-.gate.act{border-color:var(--blue);background:var(--blue-bg);transform:translateY(-10px)}
+.gates{display:flex;align-items:center;gap:0}
+.gate{width:170px;background:var(--card);border:3px solid var(--line);border-radius:22px;padding:26px 10px;transition:all .4s}
+.gate .ic{font-size:54px}.gate h3{font-size:22px;font-weight:800;margin-top:10px}
+.link{width:28px;height:4px;background:var(--line)}
+.gate.act{border-color:var(--blue);background:var(--blue-bg);transform:translateY(-12px)}
 .gate.pass{border-color:var(--green);background:var(--green-bg)}
 .gate.fail{border-color:var(--red);background:var(--red-bg);animation:shake .5s}
-@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-.tests{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.t{font:600 20px var(--mono);padding:14px 18px;border-radius:12px;background:var(--card);display:flex;justify-content:space-between;opacity:0;transform:translateY(10px);transition:all .4s}
-.t.show{opacity:1;transform:none}
-.t .no{color:var(--red)}.t .ok{color:var(--green)}
-.t.wide{grid-column:span 2;background:var(--red-bg);border:2px solid var(--red)}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.verdict{margin-top:44px;font-size:38px;font-weight:800;height:50px;opacity:0;transition:opacity .4s}
+.verdict.show{opacity:1}
 
-/* chrome */
-#bar{position:fixed;left:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--violet),var(--green));transition:width .4s}
-#count{position:fixed;right:22px;bottom:16px;font:600 14px var(--mono);color:var(--dim)}
-#hint{position:fixed;left:22px;bottom:16px;font:600 14px var(--mono);color:var(--dim)}
-@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+#bar{position:fixed;left:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .4s}
+#count{position:fixed;right:22px;bottom:16px;font:700 14px var(--mono);color:var(--dim)}
 </style>
 </head>
 <body>
 <div id="stage">
 
-<!-- 1 -->
+<!-- 1 BUG -->
 <section class="slide">
-  <div class="tag">AI SETTER · BUG BREAKDOWN</div>
-  <h1>We added <span class="a">one question</span>.<br>The setter <span class="r">lost its memory</span>.</h1>
+  <h1>+1 question <span class="a">=</span> <span class="r">broken setter</span></h1>
   <div class="row" style="margin-top:60px">
-    <div class="card red f"><div class="num r">SYMPTOM 1</div><h3 style="margin-top:8px">Re-asks questions the lead already answered</h3></div>
-    <div class="card red f"><div class="num r">SYMPTOM 2</div><h3 style="margin-top:8px">Skips its intro</h3></div>
+    <div class="tile red f"><div class="ic">🔁</div><h3>Re-asks answers</h3></div>
+    <div class="tile red f"><div class="ic">🙈</div><h3>Skips intro</h3></div>
   </div>
-  <p class="big f" style="margin-top:40px">One change, two symptoms → <b>one root cause:</b> the bot doesn't know <b class="b">where the lead is</b>.</p>
 </section>
 
-<!-- 2 -->
+<!-- 2 CHECK -->
 <section class="slide">
-  <div class="tag">01 · HOW IT REMEMBERS</div>
-  <h2>The LLM has <span class="r">no memory</span> of its own</h2>
-  <div class="loop">
-    <div class="node"><div class="ic">💬</div><h3>Lead texts</h3><p>"Budget's $200"</p></div><div class="arr"></div>
-    <div class="node" id="nMem"><div class="ic">🗂️</div><h3>Load memory</h3><p>Saved answers + current step</p></div><div class="arr"></div>
-    <div class="node" id="nPrompt"><div class="ic">🧱</div><h3>Build prompt</h3><p>Rules + history + answers</p></div><div class="arr"></div>
-    <div class="node"><div class="ic">🤖</div><h3>LLM replies</h3><p>Picks next question</p></div><div class="arr"></div>
-    <div class="node" id="nSave"><div class="ic">💾</div><h3>Save answers</h3><p>Back into memory</p></div>
+  <div class="tag">WHAT I CHECK FIRST</div>
+  <h2>Roll back. Then open <span class="b">one bad reply</span>.</h2>
+  <div class="row">
+    <div class="tile blue f"><div class="ic">📜</div><h3>Chat history there?</h3></div>
+    <div class="tile blue f"><div class="ic">🗂️</div><h3>Answers saved?</h3></div>
+    <div class="tile blue f"><div class="ic">📍</div><h3>Which step?</h3></div>
   </div>
-  <p class="big f" style="margin-top:56px">If <b class="r">memory</b>, <b class="r">prompt</b> or <b class="r">save</b> is wrong → the bot <b>guesses</b>.</p>
 </section>
 
-<!-- 3 -->
+<!-- 3 CAUSE A -->
 <section class="slide">
-  <div class="tag">02 · WHAT I CHECK FIRST</div>
-  <h2>Stop the damage. Then X-ray <span class="b">one bad reply</span>.</h2>
-  <div class="chk stop f"><span class="num">0</span><h3>Roll back to the last good version</h3><span class="pill r">STOP THE BLEEDING</span></div>
-  <div class="chk f"><span class="num">1</span><h3>Is the full chat history in the LLM request?</h3><span class="pill a">→ CAUSE B</span></div>
-  <div class="chk f"><span class="num">2</span><h3>Are the saved answers filled, or empty?</h3><span class="pill r">→ CAUSE A</span></div>
-  <div class="chk f"><span class="num">3</span><h3>Which step does it think the lead is on?</h3><span class="pill r">→ CAUSE A</span></div>
-  <div class="chk f"><span class="num">4</span><h3>Compare old vs new prompt, line by line</h3><span class="pill a">→ CAUSE B</span></div>
-</section>
-
-<!-- 4 -->
-<section class="slide">
-  <div class="tag r">03 · CAUSE A · MEMORY</div>
-  <h2>Progress is saved by <span class="r">position</span>, not by name</h2>
+  <div class="tag r">CAUSE 1 · MEMORY</div>
+  <h2>Saved by <span class="r">number</span>, not name</h2>
   <div class="shift">
     <div class="qlist" id="qlist"></div>
     <div class="ptrs">
-      <div class="ptr" id="pS"><div class="who">🧍 Sarah, mid-chat</div><div class="sv">saved: step = 2</div><div class="res" id="rS">→ Timeline ✓ (budget done)</div></div>
-      <div class="ptr" id="pN"><div class="who">🆕 New lead</div><div class="sv">starts: step = 0</div><div class="res" id="rN">→ Intro ✓</div></div>
-      <p class="note f" id="aNote">Or: the answer is said but the parser fails silently → <b class="r">nothing saved</b>.</p>
+      <div class="ptr" id="pS">🧍 Sarah <span id="rS">→ Timeline ✅</span><div class="sv">step 2</div></div>
+      <div class="ptr" id="pN">🆕 New lead <span id="rN">→ Intro ✅</span><div class="sv">step 0</div></div>
     </div>
   </div>
 </section>
 
-<!-- 5 -->
+<!-- 4 CAUSE B -->
 <section class="slide">
-  <div class="tag a">04 · CAUSE B · PROMPT</div>
-  <h2>The new line <span class="a">overrides</span> the old rules</h2>
-  <div class="pl new" id="plNew">FIRST: ask "What's your biggest challenge?"</div>
-  <div class="pl" id="pl1">1. Always open with the intro.</div>
-  <div class="pl" id="pl2">2. Never re-ask what's already known.</div>
-  <div class="pl">3. Then send the booking link.</div>
-  <p class="big f" id="bCut" style="margin-top:20px">Longer prompt → <b>oldest messages cut</b> to fit the token limit:</p>
-  <div class="cut f" id="bMsgs"><span class="msg" id="m1">Bot: "Hey Sarah 👋" (intro)</span><span class="msg" id="m2">Sarah: "Budget's $200"</span><span class="msg">Bot: "When to start?"</span><span class="msg">Sarah: "Next week"</span></div>
-</section>
-
-<!-- 6 -->
-<section class="slide">
-  <div class="tag g">05 · THE FIX</div>
-  <h2>LLM writes the words. <span class="g">Code holds the memory.</span></h2>
-  <div class="fx">
-    <div class="fxrow f"><h3>1. Stable IDs</h3><div class="code bad">step = 2</div><div class="code good">answers.budget = "$200"</div></div>
-    <div class="fxrow f"><h3>2. Code says what's left</h3><div class="code bad">"Ask in order: budget,
-timeline…"</div><div class="code good">KNOWN: budget
-STILL NEEDED: timeline</div></div>
-    <div class="fxrow f"><h3>3. Intro in code</h3><div class="code bad">prompt: "Always intro"</div><div class="code good">if not intro_sent:
-    send(INTRO)</div></div>
-    <div class="fxrow f"><h3>4. Fail loud + migrate</h3><div class="code bad">except: save({})</div><div class="code good">validate → alert
-remap live leads</div></div>
+  <div class="tag a">CAUSE 2 · PROMPT</div>
+  <h2>New line <span class="a">overrides</span> old rules</h2>
+  <div class="pls">
+    <div class="pl new" id="plNew">FIRST: ask biggest challenge</div>
+    <div class="pl" id="pl1">Always start with intro</div>
+    <div class="pl" id="pl2">Never re-ask known answers</div>
   </div>
 </section>
 
-<!-- 7 -->
+<!-- 5 FIX -->
 <section class="slide">
-  <div class="tag b">06 · THE SYSTEM</div>
-  <h2><span class="b">5 gates</span> before any client sees it</h2>
-  <div class="gates" id="gates">
-    <div class="gate"><div class="ic">📝</div><h3>Git + review</h3><p>Prompt & questions versioned</p></div>
-    <div class="gate"><div class="ic">🎬</div><h3>Replay tests</h3><p>50 real chats, incl. mid-flow leads</p></div>
-    <div class="gate"><div class="ic">👻</div><h3>Shadow</h3><p>Drafts on live traffic, sends nothing</p></div>
-    <div class="gate"><div class="ic">🐤</div><h3>Canary 10%</h3><p>One client, 24h</p></div>
-    <div class="gate"><div class="ic">📡</div><h3>Monitor</h3><p>Re-ask rate, intro rate, bookings → auto-rollback</p></div>
-  </div>
-  <div class="tests" id="tests">
-    <div class="t"><span>Intro on turn 1</span><span class="no">0/50 ✗</span></div>
-    <div class="t"><span>No re-asks of filled fields</span><span class="no">19/50 ✗</span></div>
-    <div class="t"><span>Required fields collected</span><span class="ok">50/50 ✓</span></div>
-    <div class="t"><span>Booking link sent</span><span class="no">44/50 ✗</span></div>
-    <div class="t wide"><span>🚫 Bad change blocked at gate 2. No client ever saw it.</span><span class="no">STOPPED</span></div>
-  </div>
-</section>
-
-<!-- 8 -->
-<section class="slide">
-  <div class="tag">IN ONE BREATH</div>
-  <h1 style="margin-bottom:50px">The bot didn't get dumber.<br><span class="b">It got blindfolded.</span></h1>
+  <div class="tag g">THE FIX</div>
+  <h2>Code remembers. <span class="g">LLM just talks.</span></h2>
   <div class="row">
-    <div class="card f" style="border-top:6px solid var(--red)"><span class="pill r">CAUSE</span><h3 style="margin-top:12px">Memory by position + rules left to the prompt</h3></div>
-    <div class="card f" style="border-top:6px solid var(--green)"><span class="pill g">FIX</span><h3 style="margin-top:12px">Stable IDs. Code decides what's known + sends intro.</h3></div>
-    <div class="card f" style="border-top:6px solid var(--blue)"><span class="pill" style="background:var(--blue-bg);color:var(--blue)">SYSTEM</span><h3 style="margin-top:12px">Replay tests → shadow → canary → auto-rollback</h3></div>
+    <div class="tile green f"><div class="ic">🏷️</div><h3>Names, not numbers</h3></div>
+    <div class="tile green f"><div class="ic">🧠</div><h3>Code tracks what's known</h3></div>
+    <div class="tile green f"><div class="ic">👋</div><h3>Intro sent by code</h3></div>
   </div>
+</section>
+
+<!-- 6 SYSTEM -->
+<section class="slide">
+  <div class="tag b">SO IT NEVER REACHES A CLIENT</div>
+  <h2>Every change passes <span class="b">5 gates</span></h2>
+  <div class="gates" id="gates">
+    <div class="gate"><div class="ic">📝</div><h3>Review</h3></div><div class="link"></div>
+    <div class="gate"><div class="ic">🎬</div><h3>Replay tests</h3></div><div class="link"></div>
+    <div class="gate"><div class="ic">👻</div><h3>Shadow</h3></div><div class="link"></div>
+    <div class="gate"><div class="ic">🐤</div><h3>10% canary</h3></div><div class="link"></div>
+    <div class="gate"><div class="ic">📡</div><h3>Auto-rollback</h3></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
 </section>
 
 </div>
-<div id="bar"></div><div id="hint">→ next · ← back</div><div id="count"></div>
+<div id="bar"></div><div id="count"></div>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const slides=$$('.slide');let si=0,fi=0;
-
 function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);$('#stage').style.transform=`translate(-50%,-50%) scale(${s})`}
 addEventListener('resize',fit);fit();
 
-/* Each slide: list of steps. A step is a fragment element or a function. */
-const Q0=[['intro','Intro'],['budget','Budget?'],['timeline','Timeline?'],['decider','Decision maker?']];
-const H=72;
+/* cause 1 */
+const Q0=[['intro','Intro'],['budget','Budget'],['timeline','Timeline'],['decider','Decider']],H=80;
 function drawQ(ins){
-  const list=ins?[['challenge','Biggest challenge?',1],...Q0]:Q0,el=$('#qlist');
+  const list=ins?[['challenge','Challenge',1],...Q0]:Q0,el=$('#qlist');
   if(!ins){const n=$('#q-challenge');if(n)n.remove()}
   list.forEach(([id,t,isNew],i)=>{let r=$('#q-'+id);
-    if(!r){r=document.createElement('div');r.className='q'+(isNew?' new':'');r.id='q-'+id;r.innerHTML=`<span class="ix"></span>${t}`;r.style.transform=`translateY(-80px)`;r.style.opacity=0;el.appendChild(r);r.offsetHeight}
-    r.style.transform=`translateY(${i*H}px)`;r.style.opacity=1;r.querySelector('.ix').textContent='step '+i;r.classList.remove('hit')});
+    if(!r){r=document.createElement('div');r.className='q'+(isNew?' new':'');r.id='q-'+id;r.innerHTML=`<span class="ix"></span>${t}`;r.style.transform='translateY(-90px)';r.style.opacity=0;el.appendChild(r);r.offsetHeight}
+    r.style.transform=`translateY(${i*H}px)`;r.style.opacity=1;r.querySelector('.ix').textContent=i;r.classList.remove('hit')});
 }
-function resetA(){drawQ(false);$('#pS').classList.remove('bad');$('#pN').classList.remove('bad');$('#rS').innerHTML='→ Timeline ✓ (budget done)';$('#rN').innerHTML='→ Intro ✓'}
-function resetB(){$('#plNew').classList.remove('show');$('#pl1').classList.remove('lose');$('#pl2').classList.remove('lose');$('#m1').classList.remove('gone');$('#m2').classList.remove('gone')}
-function resetLoop(){['#nMem','#nPrompt','#nSave'].forEach(s=>$(s).classList.remove('hot'))}
-function resetGates(){$$('.gate').forEach(g=>g.className='gate');$$('.t').forEach(t=>t.classList.remove('show'))}
+function resetA(){drawQ(false);$('#pS').classList.remove('bad');$('#pN').classList.remove('bad');$('#rS').textContent='→ Timeline ✅';$('#rN').textContent='→ Intro ✅'}
+
+/* system */
+async function runGates(good){
+  const g=$$('.gate'),v=$('#verdict');g.forEach(x=>x.className='gate');v.classList.remove('show');
+  for(let i=0;i<g.length;i++){g[i].classList.add('act');await wait(500);g[i].classList.remove('act');
+    if(!good&&i===1){g[i].classList.add('fail');v.innerHTML='<span class="r">🚫 Bad change blocked.</span> No client saw it.';v.classList.add('show');return}
+    g[i].classList.add('pass')}
+  v.innerHTML='<span class="g">🚀 Good change shipped.</span>';v.classList.add('show');
+}
 
 const extra={
-  1:{steps:[async()=>{for(const s of ['#nMem','#nPrompt','#nSave']){$(s).classList.add('hot');await wait(350)}},'.f'],reset:resetLoop},
-  3:{steps:[async()=>{drawQ(true);await wait(1000);$('#q-budget').classList.add('hit');$('#q-challenge').classList.add('hit');
-            $('#pS').classList.add('bad');$('#rS').innerHTML='→ <b>Budget</b>, already answered <span class="pill r">RE-ASK</span>';await wait(500);
-            $('#pN').classList.add('bad');$('#rN').innerHTML='→ <b>Challenge</b>, intro is now step 1 <span class="pill r">NO INTRO</span>'},'.f'],reset:resetA},
-  4:{steps:[async()=>{$('#plNew').classList.add('show');await wait(700);$('#pl1').classList.add('lose');await wait(400);$('#pl2').classList.add('lose')},
-            '#bCut',async()=>{$('#bMsgs').classList.add('show');await wait(600);$('#m1').classList.add('gone');await wait(400);$('#m2').classList.add('gone')}],reset:resetB},
-  6:{steps:[async()=>{const g=$$('.gate'),t=$$('.t');for(let i=0;i<2;i++){g[i].classList.add('act');await wait(600);g[i].classList.remove('act');
-            if(i===1){g[i].classList.add('fail');for(const x of t){x.classList.add('show');await wait(280)}}else g[i].classList.add('pass')}},
-            async()=>{resetGates();for(const g of $$('.gate')){g.classList.add('act');await wait(450);g.classList.remove('act');g.classList.add('pass')}}],reset:resetGates}
+  2:{steps:[async()=>{drawQ(true);await wait(1000);$('#q-budget').classList.add('hit');$('#q-challenge').classList.add('hit');
+      $('#pS').classList.add('bad');$('#rS').textContent='→ Budget again ❌';await wait(500);
+      $('#pN').classList.add('bad');$('#rN').textContent='→ No intro ❌'}],reset:resetA},
+  3:{steps:[async()=>{$('#plNew').classList.add('show');await wait(700);$('#pl1').classList.add('lose');await wait(400);$('#pl2').classList.add('lose')}],
+     reset:()=>{$('#plNew').classList.remove('show');$('#pl1').classList.remove('lose');$('#pl2').classList.remove('lose')}},
+  5:{steps:[()=>runGates(false),()=>runGates(true)],reset:()=>{$$('.gate').forEach(x=>x.className='gate');$('#verdict').classList.remove('show')}}
 };
-function stepsFor(i){
-  const s=slides[i];if(extra[i])return extra[i].steps.flatMap(x=>x==='.f'?[...s.querySelectorAll('.f')].filter(f=>!['bCut','bMsgs'].includes(f.id)):[x==='#bCut'?$('#bCut'):x]);
-  return [...s.querySelectorAll('.f')];
-}
+const stepsFor=i=>extra[i]?extra[i].steps:[...slides[i].querySelectorAll('.f')];
 function show(i){
-  slides.forEach((s,k)=>{s.classList.toggle('on',k===i);s.classList.toggle('past',k<i)});
+  slides.forEach((s,k)=>s.classList.toggle('on',k===i));
   slides[i].querySelectorAll('.f').forEach(f=>f.classList.remove('show'));
   if(extra[i])extra[i].reset();
   si=i;fi=0;$('#count').textContent=(i+1)+' / '+slides.length;$('#bar').style.width=((i+1)/slides.length*100)+'%';
 }
 function next(){const st=stepsFor(si);if(fi<st.length){const x=st[fi++];typeof x==='function'?x():x.classList.add('show')}else if(si<slides.length-1)show(si+1)}
-function prev(){if(si>0)show(si-1);else show(0)}
+function prev(){show(Math.max(0,si-1))}
 addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next()}if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}});
 addEventListener('click',e=>{e.clientX<innerWidth*.25?prev():next()});
-drawQ(false);{const m=location.hash.match(/^#([0-9]+)(!?)/);show(m?Math.min(+m[1]-1,slides.length-1):0);if(m&&m[2])stepsFor(si).forEach(()=>next())}
+drawQ(false);{const m=location.hash.match(/^#([0-9]+)(!?)/);show(m?Math.min(+m[1]-1,slides.length-1):0);if(m&&m[2])stepsFor(si).slice(0,extra[si]&&si===5?1:99).forEach(()=>next())}
 </script>
 </body>
 </html>
